@@ -23,6 +23,7 @@ For more info refer to [this link](https://docs.monogame.net/articles/packaging_
 Create a fork of the repository and then clone it
 
 Code is in the Core folder
+
 Data folder contains for example animation interval info
 
 After making some changes, commit and create a pull request to be merged.
