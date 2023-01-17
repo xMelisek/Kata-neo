@@ -9,7 +9,9 @@ A local multiplayer FFA game
 2. Build the project using .NET CLI (Ctrl + ` to open console in Visual Studio)
 
 Build for Windows: `dotnet publish -c Release -r win-x64 /p:PublishReadyToRun=false /p:TieredCompilation=false --self-contained`
+
 Build for Linux: `dotnet publish -c Release -r linux-x64 /p:PublishReadyToRun=false /p:TieredCompilation=false --self-contained`
+
 Build for MacOS: `dotnet publish -c Release -r osx-x64 /p:PublishReadyToRun=false /p:TieredCompilation=false --self-contained`
 
 The build will be in `bin\Release\net6.0\win-x64\publish`
