@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>Map1</Name>
+  <BG>Default</BG>
+  <Tiles>
+    <TileData>
+      <PosX>64</PosX>
+      <PosY>1016</PosY>
+      <Sprite>Default</Sprite>
+    </TileData>
+    <TileData>
+      <PosX>192</PosX>
+      <PosY>1016</PosY>
+      <Sprite>Default</Sprite>
+    </TileData>
+    <TileData>
+      <PosX>64</PosX>
+      <PosY>888</PosY>
+      <Sprite>Default</Sprite>
+    </TileData>
+    <TileData>
+      <PosX>1856</PosX>
+      <PosY>1016</PosY>
+      <Sprite>Default</Sprite>
+    </TileData>
+    <TileData>
+      <PosX>1728</PosX>
+      <PosY>1016</PosY>
+      <Sprite>Default</Sprite>
+    </TileData>
+    <TileData>
+      <PosX>1856</PosX>
+      <PosY>888</PosY>
+      <Sprite>Default</Sprite>
+    </TileData>
+    <TileData>
+      <PosX>960</PosX>
+      <PosY>632</PosY>
+      <Sprite>Wood</Sprite>
+    </TileData>
+  </Tiles>
+</Map>
