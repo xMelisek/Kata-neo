@@ -33,9 +33,7 @@ namespace KataNeo.Entitites
         float attackDelay = 0.2f;
         bool grounded = false;
         bool isAlive = true;
-        bool jumped = false;
         bool attacking = false;
-        bool attackHeld = false;
 
         //Temporarily give a sprite
         public Player(ControlType controlType, MapManager mapManager, AnimData animData)
@@ -51,59 +49,50 @@ namespace KataNeo.Entitites
         /// Update input for a player using a keyboard
         /// </summary>
         /// <param name="keyboard">Keyboard state</param>
-        public void InputUpdate(KeyboardState keyboard, GameTime gameTime)
+        public void KeyboardUpdate(GameTime gameTime)
         {
             //Horizontal movement
-            if (keyboard.IsKeyDown(Keys.D) && !keyboard.IsKeyDown(Keys.A)) velocity.X = moveSpeed;
-            else if (keyboard.IsKeyDown(Keys.A) && !keyboard.IsKeyDown(Keys.D)) velocity.X = -moveSpeed;
+            velocity.X = MonoHelp.GetAxis(AxisType.HorizontalKeyboard) * moveSpeed;
             //Jumping
-            if (keyboard.IsKeyDown(Keys.Space) && !jumped && grounded)
+            if (MonoHelp.GetKeyDown(Keys.Space) && grounded)
             {
                 velocity.Y = 20;
                 grounded = false;
-                jumped = true;
             }
-            else if (keyboard.IsKeyUp(Keys.Space) && jumped) jumped = false;
             //Attacking
-            if (keyboard.IsKeyDown(Keys.F) && !attackHeld && !attacking)
+            if (MonoHelp.GetKeyDown(Keys.F) && !attacking)
             {
                 //Attack
                 Debug.WriteLine("Attacking!");
                 //Set attack cooldown
                 attackTime = (float)gameTime.TotalGameTime.TotalMilliseconds;
-                attackHeld = true;
                 attacking = true;
             }
-            else if (keyboard.IsKeyUp(Keys.F)) attackHeld = false;
         }
 
         /// <summary>
         /// Update input for a player using a gamepad
         /// </summary>
         /// <param name="gamePad">State of gamepad player is currently using</param>
-        public void InputUpdate(GamePadState gamePad, GameTime gameTime)
+        public void GamepadUpdate(GameTime gameTime)
         {
             //Horizontal movement
-            velocity.X = gamePad.ThumbSticks.Left.X * moveSpeed;
+            velocity.X = MonoHelp.GetAxis(AxisType.GamePadLeftHorizontal, controlType) * moveSpeed;
             //Jumping
-            if (gamePad.Buttons.A == ButtonState.Pressed && !jumped && grounded)
+            if (MonoHelp.GetButtonDown(controlType, Buttons.A) && grounded)
             {
                 velocity.Y = 20;
                 grounded = false;
-                jumped = true;
             }
-            else if (gamePad.Buttons.A == ButtonState.Released && jumped) jumped = false;
             //Attacking
-            if (gamePad.Buttons.X == ButtonState.Pressed && !attackHeld && !attacking)
+            if (MonoHelp.GetButtonDown(controlType, Buttons.A) && !attacking)
             {
                 //Attack
                 Debug.WriteLine("Attacking!");
                 //Set attack cooldown
                 attackTime = (float)gameTime.TotalGameTime.TotalMilliseconds;
-                attackHeld = true;
                 attacking = true;
             }
-            else if (gamePad.Buttons.X == ButtonState.Released) attackHeld = false;
         }
 
         public override void Update(GameTime gameTime)
@@ -122,7 +111,7 @@ namespace KataNeo.Entitites
             velocity = Mathf.Lerp(velocity, baseVelocity, 0.05f);
             CheckCollision();
 
-            //Check if the player is on the bootom of the screen so he can jump
+            //Check if the player is on the bottom of the screen so he can jump
             if (position.Y > 1080 - sprite.Height / 2)
             {
                 grounded = true;

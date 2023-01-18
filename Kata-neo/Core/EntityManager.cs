@@ -64,14 +64,14 @@ namespace KataNeo
             return JsonSerializer.Deserialize<float[]>(File.ReadAllText("Data/Animations" + path.Remove(0, 7) + "/intervals.json"));
         }
 
-        public void Update(GameTime gametime, InputState inputState)
+        public void Update(GameTime gametime)
         {
             foreach (var player in _players)
             {
                 if (player.controlType == ControlType.Keyboard)
-                    player.InputUpdate(inputState.keyboardState, gametime);
+                    player.KeyboardUpdate(gametime);
                 else
-                    player.InputUpdate(inputState.gamePads[(int)player.controlType - 1], gametime);
+                    player.GamepadUpdate(gametime);
                 player.Update(gametime);
             }
         }

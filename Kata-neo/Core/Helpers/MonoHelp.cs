@@ -115,6 +115,72 @@ namespace KataNeo
             if (prevGamePadStates[(int)controlType - 1].IsButtonDown(button) && gamePadStates[(int)controlType - 1].IsButtonUp(button)) return true;
             else return false;
         }
+
+        /// <summary>
+        /// Gets the specified axis value
+        /// </summary>
+        /// <param name="axisType">Type of axis to get</param>
+        /// <returns>A float between -1 and 1</returns>
+        /// <exception cref="System.Exception">Thrown when an incorrect AxisType is passed</exception>
+        public static float GetAxis(AxisType axisType)
+        {
+            switch (axisType)
+            {
+                case AxisType.HorizontalKeyboard:
+                    {
+                        float vec = 0;
+                        if (GetKey(Keys.D)) vec += 1f;
+                        if (GetKey(Keys.A)) vec -= 1f;
+                        return vec;
+                    }
+                case AxisType.VerticalKeyboard:
+                    {
+                        float vec = 0;
+                        if (GetKey(Keys.W)) vec += 1f;
+                        if (GetKey(Keys.S)) vec -= 1f;
+                        return vec;
+                    }
+                default:
+                    throw new System.Exception("Wrong enum");
+            }
+        }
+
+        /// <summary>
+        /// Gets the specified axis value
+        /// </summary>
+        /// <param name="axisType">Type of axis to get</param>
+        /// <param name="controlType">Use it when getting a gamepad axis</param>
+        /// <returns>A float between -1 and 1</returns>
+        public static float GetAxis(AxisType axisType, ControlType controlType)
+        {
+            switch (axisType)
+            {
+                case AxisType.HorizontalKeyboard:
+                {
+                    float vec = 0;
+                    if (GetKey(Keys.D)) vec += 1f;
+                    if (GetKey(Keys.A)) vec -= 1f;
+                    return vec;
+                }
+                case AxisType.VerticalKeyboard:
+                {
+                    float vec = 0;
+                    if (GetKey(Keys.W)) vec += 1f;
+                    if (GetKey(Keys.S)) vec -= 1f;
+                    return vec;
+                }
+                case AxisType.GamePadLeftHorizontal:
+                    return gamePadStates[(int)controlType - 1].ThumbSticks.Left.X;
+                case AxisType.GamePadLeftVertical:
+                    return gamePadStates[(int)controlType - 1].ThumbSticks.Left.Y;
+                case AxisType.GamePadRightHorizontal:
+                    return gamePadStates[(int)controlType - 1].ThumbSticks.Right.X;
+                case AxisType.GamePadRightVertical:
+                    return gamePadStates[(int)controlType - 1].ThumbSticks.Right.Y;
+                default:
+                    return 0f;
+            }
+        }
         #endregion
 
         //TODO in this region
@@ -188,6 +254,34 @@ namespace KataNeo
             }
             return (contents.ToArray(), paths.ToArray());
         }
+        #endregion
     }
-    #endregion
+
+    public enum AxisType
+    {
+        /// <summary>
+        /// Horizontal axis for the keyboard. D is positive and A is negative
+        /// </summary>
+        HorizontalKeyboard,
+        /// <summary>
+        /// Vertical axis for the keyboard. W is positive and S is negative
+        /// </summary>
+        VerticalKeyboard,
+        /// <summary>
+        /// Horizontal axis of the left gamepad stick
+        /// </summary>
+        GamePadLeftHorizontal,
+        /// <summary>
+        /// Vertical axis of the left gamepad stick
+        /// </summary>
+        GamePadLeftVertical,
+        /// <summary>
+        /// Horizontal axis of the right gamepad stick
+        /// </summary>
+        GamePadRightHorizontal,
+        /// <summary>
+        /// Vertical axis of the right gamepad stick
+        /// </summary>
+        GamePadRightVertical,
+    }
 }

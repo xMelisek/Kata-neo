@@ -108,10 +108,7 @@ namespace KataNeo
                 entityManager.AddPlayer(ControlType.Gamepad4, mapManager);
             }
             //Update entities
-            entityManager.Update(gameTime,
-                new InputState(Keyboard.GetState(), new GamePadState[4]
-                { GamePad.GetState(PlayerIndex.One), GamePad.GetState(PlayerIndex.Two), GamePad.GetState(PlayerIndex.Three), GamePad.GetState(PlayerIndex.Four) }));
-
+            entityManager.Update(gameTime);
             base.Update(gameTime);
         }
 
