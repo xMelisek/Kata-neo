@@ -49,6 +49,7 @@ namespace KataNeo
                 anims.Add(new Anim(sheets.Item1[i], GetIntervals(sheets.Item2[i])));
             }
             if (anims.Count == 0) throw new System.Exception("There are no animations in directory");
+            //Shorten keywords for easier animation referencing
             List<string> keys = new List<string>();
             foreach (var dir in sheets.Item2)
             {

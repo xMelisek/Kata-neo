@@ -48,7 +48,6 @@ namespace KataNeo.Entitites
         /// <summary>
         /// Update input for a player using a keyboard
         /// </summary>
-        /// <param name="keyboard">Keyboard state</param>
         public void KeyboardUpdate(GameTime gameTime)
         {
             //Horizontal movement
@@ -73,7 +72,6 @@ namespace KataNeo.Entitites
         /// <summary>
         /// Update input for a player using a gamepad
         /// </summary>
-        /// <param name="gamePad">State of gamepad player is currently using</param>
         public void GamepadUpdate(GameTime gameTime)
         {
             //Horizontal movement

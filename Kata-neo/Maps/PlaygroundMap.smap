@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>PlaygroundMap</Name>
+  <BG>Default</BG>
+  <Tiles>
+    <TileData>
+      <PosX>960</PosX>
+      <PosY>540</PosY>
+      <Sprite>Default</Sprite>
+    </TileData>
+  </Tiles>
+</Map>

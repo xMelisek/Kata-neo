@@ -1,0 +1,16 @@
+﻿{
+  "Name": "DummyMap",
+  "BG":  "Default",
+  "Tiles": [
+    {
+      "PosX": 960,
+      "PosY": 540,
+      "Sprite": "Default"
+    },
+    {
+      "PosX": 64,
+      "PosY": 540,
+      "Sprite": "Default"
+    }
+  ]
+}

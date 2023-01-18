@@ -41,4 +41,9 @@
     <EmbeddedResource Remove="Build\**" />
     <None Remove="Build\**" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="Custom\DummyMapJson.smap" />
+    <Content Include="Custom\DummyMapXML.smap" />
+  </ItemGroup>
 </Project>
