@@ -181,7 +181,8 @@ namespace KataNeo.Entitites
                         {
                             grounded = true;
                             velocity.Y = 0;
-                            position.Y = tile.position.Y - tile.sprite.Height / 2 - sprite.Height / 2;
+                            //Decrease slightly to constantly collide and not fk up the grounded flag
+                            position.Y = tile.position.Y - tile.sprite.Height / 2 - sprite.Height / 2 + 1;
                         }
                     }
                 }
