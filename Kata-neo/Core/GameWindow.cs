@@ -11,9 +11,9 @@ namespace KataNeo
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        private List<ControlType> _usedControls;
         public EntityManager entityManager;
         public MapManager mapManager;
-        private List<ControlType> _usedControls;
 
 #if DEBUG
         private Texture2D debugOutline;
@@ -68,6 +68,7 @@ namespace KataNeo
 
         protected override void Update(GameTime gameTime)
         {
+            //Update input states for input handling
             MonoHelp.prevState = MonoHelp.curState;
             MonoHelp.curState = Keyboard.GetState();
             MonoHelp.prevGamePadStates = MonoHelp.gamePadStates;
