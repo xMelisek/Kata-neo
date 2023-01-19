@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace KataNeo
 {
@@ -10,6 +11,9 @@ namespace KataNeo
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
+        private ResolutionIndependentRenderer _resolutionIndependence;
+        private Camera2D _camera;
 
         private List<ControlType> _usedControls;
         public EntityManager entityManager;
@@ -22,7 +26,6 @@ namespace KataNeo
         public GameWindow()
         {
             _graphics = new GraphicsDeviceManager(this);
-            Window.IsBorderless = true;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -35,12 +38,17 @@ namespace KataNeo
 
         protected override void Initialize()
         {
+            _resolutionIndependence = new ResolutionIndependentRenderer(this);
+            _camera = new Camera2D(_resolutionIndependence);
+            InitializeResolutionIndependence(1280, 720);
+            _camera.Zoom = 1f;
+            _camera.Position = new Vector2(_resolutionIndependence.VirtualWidth / 2, _resolutionIndependence.VirtualHeight / 2);
             _usedControls = new List<ControlType>();
             entityManager = new EntityManager(this);
             mapManager = new MapManager();
 
-            _graphics.PreferredBackBufferWidth = 1920;
-            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferWidth = 1280;
+            _graphics.PreferredBackBufferHeight = 720;
             _graphics.ApplyChanges();
 
             //Init states so errors wont be thrown at the first frame
@@ -53,6 +61,18 @@ namespace KataNeo
             MonoHelp.gamePadStates = padStates.ToArray();
 
             base.Initialize();
+        }
+
+        //Initialize Independent resolution and camera
+        private void InitializeResolutionIndependence(int realScreenWidth, int realScreenHeight)
+        {
+            _resolutionIndependence.VirtualWidth = 1920;
+            _resolutionIndependence.VirtualHeight = 1080;
+            _resolutionIndependence.ScreenWidth = realScreenWidth;
+            _resolutionIndependence.ScreenHeight = realScreenHeight;
+            _resolutionIndependence.Initialize();
+
+            _camera.RecalculateTransformationMatrices();
         }
 
         protected override void LoadContent()
@@ -116,7 +136,8 @@ namespace KataNeo
         {
             GraphicsDevice.Clear(Color.DimGray);
 
-            _spriteBatch.Begin(samplerState: SamplerState.PointWrap);
+            _resolutionIndependence.BeginDraw();
+            _spriteBatch.Begin(samplerState: SamplerState.PointWrap, transformMatrix: _camera.GetViewTransformationMatrix());
             //Draw tiles
             mapManager.Draw(gameTime, _spriteBatch);
             //Draw entities

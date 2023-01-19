@@ -53,8 +53,7 @@ namespace KataNeo
         /// <returns>If the key was pressed</returns>
         public static bool GetKeyDown(Keys key)
         {
-            if (prevState.IsKeyUp(key) && curState.IsKeyDown(key)) return true;
-            else return false;
+            return prevState.IsKeyUp(key) && curState.IsKeyDown(key);
         }
 
         /// <summary>
@@ -65,8 +64,7 @@ namespace KataNeo
         /// <returns>If the button was pressed</returns>
         public static bool GetButtonDown(PlayerIndex playerIndex, Buttons button)
         {
-            if (prevGamePadStates[(int)playerIndex].IsButtonUp(button) && gamePadStates[(int)playerIndex].IsButtonDown(button)) return true;
-            else return false;
+            return prevGamePadStates[(int)playerIndex].IsButtonUp(button) && gamePadStates[(int)playerIndex].IsButtonDown(button);
         }
 
         /// <summary>
@@ -77,8 +75,7 @@ namespace KataNeo
         /// <returns>If the button was pressed</returns>
         public static bool GetButtonDown(ControlType controlType, Buttons button)
         {
-            if (prevGamePadStates[(int)controlType - 1].IsButtonUp(button) && gamePadStates[(int)controlType - 1].IsButtonDown(button)) return true;
-            else return false;
+            return prevGamePadStates[(int)controlType - 1].IsButtonUp(button) && gamePadStates[(int)controlType - 1].IsButtonDown(button);
         }
 
         /// <summary>
@@ -88,8 +85,7 @@ namespace KataNeo
         /// <returns>If the key was released</returns>
         public static bool GetKeyUp(Keys key)
         {
-            if (prevState.IsKeyDown(key) && curState.IsKeyUp(key)) return true;
-            else return false;
+            return prevState.IsKeyDown(key) && curState.IsKeyUp(key);
         }
 
         /// <summary>
@@ -100,8 +96,7 @@ namespace KataNeo
         /// <returns>If the button was released</returns>
         public static bool GetButtonUp(PlayerIndex playerIndex, Buttons button)
         {
-            if (prevGamePadStates[(int)playerIndex].IsButtonDown(button) && gamePadStates[(int)playerIndex].IsButtonUp(button)) return true;
-            else return false;
+            return prevGamePadStates[(int)playerIndex].IsButtonDown(button) && gamePadStates[(int)playerIndex].IsButtonUp(button);
         }
 
         /// <summary>
@@ -112,8 +107,7 @@ namespace KataNeo
         /// <returns>If the button was released</returns>
         public static bool GetButtonUp(ControlType controlType, Buttons button)
         {
-            if (prevGamePadStates[(int)controlType - 1].IsButtonDown(button) && gamePadStates[(int)controlType - 1].IsButtonUp(button)) return true;
-            else return false;
+            return prevGamePadStates[(int)controlType - 1].IsButtonDown(button) && gamePadStates[(int)controlType - 1].IsButtonUp(button);
         }
 
         /// <summary>
