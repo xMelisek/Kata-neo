@@ -138,71 +138,67 @@ namespace KataNeo.Entitites
             {
                 if (Rect.Intersects(tile.Rect))
                 {
-                    Vector2 distVec = position - tile.position;
-                    bool left = false;
-                    bool up = false;
+                    Vector2 distVec;
+                    bool right = false;
+                    bool top = false;
 
-                    //Check which side the player could collide
-                    if (distVec.X < 0)
-                        distVec.X += sprite.Width / 2 - tile.sprite.Width / 2;
+                    if (Math.Abs(Rect.Right - tile.Rect.Left) < Math.Abs(Rect.Left - tile.Rect.Right))
+                        distVec.X = Rect.Right - tile.Rect.Left;
                     else
                     {
-                        left = true;
-                        distVec.X -= sprite.Width / 2 + tile.sprite.Width / 2;
+                        distVec.X = Rect.Left - tile.Rect.Right;
+                        right = true;
                     }
-                    if (distVec.Y < 0)
-                        distVec.Y += sprite.Height / 2 - tile.sprite.Height / 2;
+                    if (Math.Abs(Rect.Bottom - tile.Rect.Top) < Math.Abs(Rect.Top - tile.Rect.Bottom))
+                    {
+                        distVec.Y = Rect.Bottom - tile.Rect.Top;
+                        top = true;
+                    }
                     else
+                        distVec.Y = Rect.Top - tile.Rect.Bottom;
+                    if (right)
                     {
-                        up = true;
-                        distVec.Y -= sprite.Height / 2 + tile.sprite.Height / 2;
-                    }
-
-                    //Move the player to either side of the tile depending on which one is higher
-                    if (left)
-                    {
-                        Debug.WriteLine($"{distVec.X}, {distVec.Y}");
-                        if (distVec.X >= -5 && Math.Abs(distVec.Y) >= tile.sprite.Height / 2 - 5)
+                        if (Math.Abs(distVec.X) < Math.Abs(distVec.Y))
                         {
+                            position.X = tile.Rect.Right + sprite.Width / 2;
                             velocity.X = 0;
-                            position.X = tile.position.X + tile.sprite.Width / 2 + sprite.Width / 2;
                         }
                         else
                         {
-                            if (up)
+                            if (top)
                             {
+                                //Decrease slightly to constantly collide and not fk up the grounded flag
+                                position.Y = tile.Rect.Top - sprite.Height / 2;
                                 velocity.Y = 0;
-                                position.Y = tile.position.Y + tile.sprite.Height / 2 + sprite.Height / 2;
+                                grounded = true;
                             }
                             else
                             {
-                                grounded = true;
+                                position.Y = tile.Rect.Bottom + sprite.Height / 2;
                                 velocity.Y = 0;
-                                //Decrease slightly to constantly collide and not fk up the grounded flag
-                                position.Y = tile.position.Y - tile.sprite.Height / 2 - sprite.Height / 2 + 1;
                             }
                         }
                     }
                     else
                     {
-                        if (Math.Abs(distVec.Y) < tile.sprite.Height / 2)
+                        if (Math.Abs(distVec.X) < Math.Abs(distVec.Y))
                         {
+                            position.X = tile.Rect.Left - sprite.Width / 2;
                             velocity.X = 0;
-                            position.X = tile.position.X - tile.sprite.Width / 2 - sprite.Width / 2;
                         }
                         else
                         {
-                            if (up)
+                            if (top)
                             {
+                                //Decrease slightly to constantly collide and not fk up the grounded flag
+                                position.Y = tile.Rect.Top - sprite.Height / 2;
                                 velocity.Y = 0;
-                                position.Y = tile.position.Y + tile.sprite.Height / 2 + sprite.Height / 2;
+                                grounded = true;
                             }
                             else
                             {
-                                grounded = true;
+                                position.Y = tile.Rect.Bottom + sprite.Height / 2;
                                 velocity.Y = 0;
-                                //Decrease slightly to constantly collide and not fk up the grounded flag
-                                position.Y = tile.position.Y - tile.sprite.Height / 2 - sprite.Height / 2 + 1;
                             }
                         }
                     }
