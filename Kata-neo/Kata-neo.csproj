@@ -43,7 +43,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Content Include="Custom\DummyMapJson.smap" />
-    <Content Include="Custom\DummyMapXML.smap" />
+    <Content Include="Custom\DummyMapJson.knm" />
+    <Content Include="Custom\DummyMapXML.knm" />
   </ItemGroup>
 </Project>

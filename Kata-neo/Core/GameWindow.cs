@@ -78,7 +78,7 @@ namespace KataNeo
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            mapManager.LoadMap("Maps/Map1.smap", this);
+            mapManager.LoadMap("Maps/Map1", this);
             //Comment for now as first player defaulting to keyboard may not be the wanted result
             //entityManager.AddPlayer(ControlType.Keyboard, mapManager);
 #if DEBUG
@@ -104,28 +104,28 @@ namespace KataNeo
             //Join players
             if (MonoHelp.GetKeyDown(Keys.Enter) && !_usedControls.Contains(ControlType.Keyboard))
             {
+                entityManager.AddPlayer(ControlType.Keyboard, mapManager, mapManager.spawnPoses[_usedControls.Count]);
                 _usedControls.Add(ControlType.Keyboard);
-                entityManager.AddPlayer(ControlType.Keyboard, mapManager);
             }
             if (MonoHelp.GetButtonDown(PlayerIndex.One, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad1))
             {
+                entityManager.AddPlayer(ControlType.Gamepad1, mapManager, mapManager.spawnPoses[_usedControls.Count]);
                 _usedControls.Add(ControlType.Gamepad1);
-                entityManager.AddPlayer(ControlType.Gamepad1, mapManager);
             }
             if (MonoHelp.GetButtonDown(PlayerIndex.Two, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad2))
             {
+                entityManager.AddPlayer(ControlType.Gamepad2, mapManager, mapManager.spawnPoses[_usedControls.Count]);
                 _usedControls.Add(ControlType.Gamepad2);
-                entityManager.AddPlayer(ControlType.Gamepad2, mapManager);
             }
             if (MonoHelp.GetButtonDown(PlayerIndex.Three, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad3))
             {
+                entityManager.AddPlayer(ControlType.Gamepad3, mapManager, mapManager.spawnPoses[_usedControls.Count]);
                 _usedControls.Add(ControlType.Gamepad3);
-                entityManager.AddPlayer(ControlType.Gamepad3, mapManager);
             }
             if (MonoHelp.GetButtonDown(PlayerIndex.Four, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad4))
             {
+                entityManager.AddPlayer(ControlType.Gamepad4, mapManager, mapManager.spawnPoses[_usedControls.Count]);
                 _usedControls.Add(ControlType.Gamepad4);
-                entityManager.AddPlayer(ControlType.Gamepad4, mapManager);
             }
             //Update entities
             entityManager.Update(gameTime);

@@ -1,0 +1,34 @@
+﻿{
+  "Name": "DummyMap",
+  "BG": "Default",
+  "SpawnPoses": [
+    {
+      "X": 64,
+      "Y": 540
+    },
+    {
+      "X": 192,
+      "Y": 540
+    },
+    {
+      "X": 1728,
+      "Y": 540
+    },
+    {
+      "X": 1856,
+      "Y": 540
+    }
+  ],
+  "Tiles": [
+    {
+      "PosX": 960,
+      "PosY": 540,
+      "Sprite": "Default"
+    },
+    {
+      "PosX": 64,
+      "PosY": 540,
+      "Sprite": "Default"
+    }
+  ]
+}

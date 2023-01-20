@@ -13,47 +13,19 @@ namespace KataNeo
     public class MapManager
     {
         private Texture2D bg;
+        public Vector2[] spawnPoses;
         public List<Tile> tiles = new List<Tile>();
-
-        public MapManager()
-        {
-
-        }
 
         #region Map Management
         //Load map from data
-        [Obsolete]
-        public void LoadMapJSON(string path, GameWindow gameWindow)
-        {
-            var map = JsonSerializer.Deserialize<Map>(File.ReadAllText(path));
-            bg = gameWindow.Content.Load<Texture2D>($"BGs/{map.BG}");
-            foreach (var tile in map.Tiles)
-            {
-                tiles.Add(new Tile(new Vector2(tile.PosX, tile.PosY),
-                    gameWindow.Content.Load<Texture2D>($"Tiles/{tile.Sprite}")));
-            }
-        }
-
-        [Obsolete]
-        public void LoadMapXML(string path, GameWindow gameWindow)
-        {
-            var serializer = new XmlSerializer(typeof(Map));
-            using var fileStream = new FileStream(path, FileMode.Open);
-            var map = (Map)serializer.Deserialize(fileStream);
-            bg = gameWindow.Content.Load<Texture2D>($"BGs/{map.BG}");
-            foreach (var tile in map.Tiles)
-            {
-                tiles.Add(new Tile(new Vector2(tile.PosX, tile.PosY),
-                    gameWindow.Content.Load<Texture2D>($"Tiles/{tile.Sprite}")));
-            }
-        }
-
         public void LoadMap(string path, GameWindow gameWindow)
         {
+            path += ".knm";
             try
             {
                 var map = JsonSerializer.Deserialize<Map>(File.ReadAllText(path));
                 bg = gameWindow.Content.Load<Texture2D>($"BGs/{map.BG}");
+                spawnPoses = map.SpawnPoses;
                 foreach (var tile in map.Tiles)
                 {
                     tiles.Add(new Tile(new Vector2(tile.PosX, tile.PosY),
@@ -70,6 +42,7 @@ namespace KataNeo
                     using var fileStream = new FileStream(path, FileMode.Open);
                     var map = (Map)serializer.Deserialize(fileStream);
                     bg = gameWindow.Content.Load<Texture2D>($"BGs/{map.BG}");
+                    spawnPoses = map.SpawnPoses;
                     foreach (var tile in map.Tiles)
                     {
                         tiles.Add(new Tile(new Vector2(tile.PosX, tile.PosY),
@@ -79,7 +52,7 @@ namespace KataNeo
                 }
                 catch (InvalidOperationException)
                 {
-                    throw new Exception("File format was not in json or xml or it has errors in styntax");
+                    throw new Exception("File format was not in json/xml or it has errors in styntax");
                 }
             }
         }

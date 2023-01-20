@@ -32,9 +32,9 @@ namespace KataNeo
         /// </summary>
         /// <param name="controlType"></param>
         /// <param name="mapManager"></param>
-        public void AddPlayer(ControlType controlType, MapManager mapManager)
+        public void AddPlayer(ControlType controlType, MapManager mapManager, Vector2 position)
         {
-            _players.Add(new Player(controlType, mapManager, GetAllPlayerAnims()));
+            _players.Add(new Player(controlType, mapManager, GetAllPlayerAnims(), position));
         }
 
         //Helper functions for player Initializing

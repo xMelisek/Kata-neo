@@ -12,7 +12,7 @@ namespace KataNeo.Entitites
         public ControlType controlType;
 
         //Position and movement related vars
-        public Vector2 position = new Vector2(1920 / 2, 1080 / 2);
+        public Vector2 position;
         public Rectangle Rect
         {
             get => new Rectangle((int)position.X - sprite.Width / 2, (int)position.Y - sprite.Height / 2,
@@ -36,8 +36,9 @@ namespace KataNeo.Entitites
         bool attacking = false;
 
         //Temporarily give a sprite
-        public Player(ControlType controlType, MapManager mapManager, AnimData animData)
+        public Player(ControlType controlType, MapManager mapManager, AnimData animData, Vector2 position)
         {
+            this.position = position;
             this.controlType = controlType;
             this.mapManager = mapManager;
             this.animData = animData;
@@ -129,7 +130,6 @@ namespace KataNeo.Entitites
         }
         #endregion
 
-        //TODO: check if the player is high on y and low on z
         //I love making physics I love making physics I love making physics I love making physics I love making physics
         public void CheckCollision()
         {
