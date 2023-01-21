@@ -2,10 +2,34 @@
 <Map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Name>PlaygroundMap</Name>
   <BG>Default</BG>
+  <SpawnPoses>
+    <Vector2>
+      <X>64</X>
+      <Y>540</Y>
+    </Vector2>
+    <Vector2>
+      <X>192</X>
+      <Y>540</Y>
+    </Vector2>
+    <Vector2>
+      <X>1728</X>
+      <Y>540</Y>
+    </Vector2>
+    <Vector2>
+      <X>1856</X>
+      <Y>540</Y>
+    </Vector2>
+  </SpawnPoses>
   <Tiles>
     <TileData>
-      <PosX>960</PosX>
-      <PosY>540</PosY>
+      <Position>
+        <X>960</X>
+        <Y>540</Y>
+      </Position>
+      <Scale>
+        <X>2</X>
+        <Y>2</Y>
+      </Scale>
       <Sprite>Default</Sprite>
     </TileData>
   </Tiles>

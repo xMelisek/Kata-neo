@@ -23,11 +23,19 @@
     {
       "PosX": 960,
       "PosY": 540,
+      "Scale": {
+        "X": 1,
+        "Y": 1
+      },
       "Sprite": "Default"
     },
     {
       "PosX": 64,
       "PosY": 540,
+      "Scale": {
+        "X": 1,
+        "Y": 1
+      },
       "Sprite": "Default"
     }
   ]

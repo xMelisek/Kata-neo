@@ -13,17 +13,17 @@ namespace KataNeo.Entitites
 
         //Position and movement related vars
         public Vector2 position;
+        public Vector2 scale = new Vector2(1, 1);
         public Rectangle Rect
         {
-            get => new Rectangle((int)position.X - sprite.Width / 2, (int)position.Y - sprite.Height / 2,
-            sprite.Width, sprite.Height);
+            get => new Rectangle((int)(position.X - sprite.Width * scale.X / 2f), (int)(position.Y - sprite.Height * scale.Y / 2f),
+            (int)(sprite.Width * scale.X), (int)(sprite.Height * scale.Y));
         }
         public Vector2 velocity;
         private readonly Vector2 baseVelocity = new Vector2(0, -19.62f);
         public float moveSpeed = 5f;
 
         public Texture2D sprite;
-
         public AnimData animData;
         public Animator animator;
 
@@ -126,7 +126,7 @@ namespace KataNeo.Entitites
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(sprite, position, null, Color.White, 0f,
-                new Vector2(sprite.Width / 2, sprite.Height / 2), 1f, SpriteEffects.None, 0f);
+                new Vector2(sprite.Width / 2, sprite.Height / 2), scale, SpriteEffects.None, 0f);
         }
         #endregion
 

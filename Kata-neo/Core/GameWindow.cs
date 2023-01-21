@@ -78,6 +78,7 @@ namespace KataNeo
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            //mapManager.ExportMap("Maps/PlaygroundMap");
             mapManager.LoadMap("Maps/Map1", this);
             //Comment for now as first player defaulting to keyboard may not be the wanted result
             //entityManager.AddPlayer(ControlType.Keyboard, mapManager);

@@ -24,13 +24,25 @@
   <!--Tile positions and sprite names-->
   <Tiles>
     <TileData>
-      <PosX>64</PosX>
-      <PosY>1016</PosY>
+      <Position>
+        <X>64</X>
+        <Y>1016</Y>
+      </Position>
+      <Scale>
+        <X>1</X>
+        <Y>1</Y>
+      </Scale>
       <Sprite>Default</Sprite>
     </TileData>
     <TileData>
-      <PosX>192</PosX>
-      <PosY>1016</PosY>
+      <Position>
+        <X>192</X>
+        <Y>1016</Y>
+      </Position>
+      <Scale>
+        <X>1</X>
+        <Y>1</Y>
+      </Scale>
       <Sprite>Default</Sprite>
     </TileData>
   </Tiles>

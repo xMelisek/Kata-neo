@@ -45,5 +45,6 @@
   <ItemGroup>
     <Content Include="Custom\DummyMapJson.knm" />
     <Content Include="Custom\DummyMapXML.knm" />
+    <Content Include="Custom\README.md" />
   </ItemGroup>
 </Project>
