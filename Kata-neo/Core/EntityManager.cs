@@ -12,19 +12,19 @@ namespace KataNeo
     public class EntityManager
     {
         private GameWindow gameWindow;
-        private List<Entity> _entities;
-        public List<Player> _players;
+        public List<Entity> entities;
+        public List<Player> players;
 
         public EntityManager(GameWindow gameWindow)
         {
             this.gameWindow = gameWindow;
-            _entities = new List<Entity>();
-            _players = new List<Player>();
+            entities = new List<Entity>();
+            players = new List<Player>();
         }
 
         public void AddEntity(Entity entity)
         {
-            _entities.Add(entity);
+            entities.Add(entity);
         }
 
         /// <summary>
@@ -34,40 +34,12 @@ namespace KataNeo
         /// <param name="mapManager"></param>
         public void AddPlayer(ControlType controlType, MapManager mapManager, Vector2 position)
         {
-            _players.Add(new Player(controlType, mapManager, GetAllPlayerAnims(), position));
-        }
-
-        //Helper functions for player Initializing
-        private AnimData GetAllPlayerAnims()
-        {
-            //Get all of the animations with directories to them
-            var sheets = MonoHelp.LoadAllContent<Texture2D>(gameWindow, "Player", true, true);
-            List<Anim> anims = new List<Anim>();
-            //Add all of the animations and get the intervals from their directories
-            for (int i = 0; i < sheets.Item1.Length; i++)
-            {
-                anims.Add(new Anim(sheets.Item1[i], GetIntervals(sheets.Item2[i])));
-            }
-            if (anims.Count == 0) throw new System.Exception("There are no animations in directory");
-            //Shorten keywords for easier animation referencing
-            List<string> keys = new List<string>();
-            foreach (var dir in sheets.Item2)
-            {
-                int slash = dir.LastIndexOf('/');
-                int backslash = dir.LastIndexOf('\\');
-                keys.Add(backslash > slash ? dir.Remove(0, backslash + 1) : dir.Remove(0, slash + 1));
-            }
-            return new AnimData(anims.ToArray(), keys.ToArray());
-        }
-
-        private float[] GetIntervals(string path)
-        {
-            return JsonSerializer.Deserialize<float[]>(File.ReadAllText("Data/Animations" + path.Remove(0, 7) + "/intervals.json"));
+            players.Add(new Player(controlType, mapManager, MonoHelp.GetAllAnims("Player"), position));
         }
 
         public void Update(GameTime gametime)
         {
-            foreach (var player in _players)
+            foreach (var player in players)
             {
                 if (player.controlType == ControlType.Keyboard)
                     player.KeyboardUpdate(gametime);
@@ -79,12 +51,12 @@ namespace KataNeo
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            foreach (var entity in _entities)
+            foreach (var entity in entities)
             {
                 entity.Draw(gameTime, spriteBatch);
             }
 
-            foreach (var player in _players)
+            foreach (var player in players)
             {
                 player.Draw(gameTime, spriteBatch);
             }

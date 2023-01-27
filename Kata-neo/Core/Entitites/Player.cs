@@ -1,4 +1,5 @@
 ﻿using KataNeo.Animation;
+using KataNeo.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -19,30 +20,33 @@ namespace KataNeo.Entitites
             get => new Rectangle((int)(position.X - sprite.Width * scale.X / 2f), (int)(position.Y - sprite.Height * scale.Y / 2f),
             (int)(sprite.Width * scale.X), (int)(sprite.Height * scale.Y));
         }
+        private Vector2 input;
         public Vector2 velocity;
         private readonly Vector2 baseVelocity = new Vector2(0, -19.62f);
-        public float moveSpeed = 5f;
+        public float moveSpeed = 10f;
 
         public Texture2D sprite;
         public AnimData animData;
         public Animator animator;
+        public Attack attack;
 
         private MapManager mapManager;
 
+        private Vector2 attackOffset = new Vector2(50, 50);
         float attackTime;
-        float attackDelay = 0.2f;
+        float attackDelay = 0.225f;
         bool grounded = false;
         bool isAlive = true;
         bool attacking = false;
+        private bool flipped;
 
-        //Temporarily give a sprite
         public Player(ControlType controlType, MapManager mapManager, AnimData animData, Vector2 position)
         {
             this.position = position;
             this.controlType = controlType;
             this.mapManager = mapManager;
             this.animData = animData;
-            animator = new Animator(ref sprite, animData.GetAnim("Idle_L"));
+            animator = new Animator(ref sprite, animData.GetAnim("Idle_R"));
         }
 
         #region Game Loop Updates
@@ -51,21 +55,25 @@ namespace KataNeo.Entitites
         /// </summary>
         public void KeyboardUpdate(GameTime gameTime)
         {
+            input = new Vector2(MonoHelp.GetAxis(AxisType.HorizontalKeyboard), MonoHelp.GetAxis(AxisType.VerticalKeyboard));
             //Horizontal movement
-            velocity.X = MonoHelp.GetAxis(AxisType.HorizontalKeyboard) * moveSpeed;
+            velocity.X = input.X * moveSpeed;
             //Jumping
-            if (MonoHelp.GetKeyDown(Keys.Space) /*&& grounded*/)
+            if (MonoHelp.GetKeyDown(Keys.Space) && grounded)
             {
                 velocity.Y = 20;
                 grounded = false;
             }
             //Attacking
-            if (MonoHelp.GetKeyDown(Keys.F) && !attacking)
+            if (MonoHelp.GetKeyDown(Keys.K) && !attacking)
             {
                 //Attack
-                Debug.WriteLine("Attacking!");
+                if (input.X == 0 && input.Y == 0)
+                    attack = new Attack(new Vector2(attackOffset.X * (flipped ? -1 : 1), attackOffset.Y * input.Y));
+                else
+                    attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y));
                 //Set attack cooldown
-                attackTime = (float)gameTime.TotalGameTime.TotalMilliseconds;
+                attackTime = (float)gameTime.TotalGameTime.TotalSeconds;
                 attacking = true;
             }
         }
@@ -75,8 +83,9 @@ namespace KataNeo.Entitites
         /// </summary>
         public void GamepadUpdate(GameTime gameTime)
         {
+            input = new Vector2(MonoHelp.GetAxis(AxisType.GamePadLeftHorizontal, controlType), MonoHelp.GetAxis(AxisType.GamePadLeftVertical, controlType));
             //Horizontal movement
-            velocity.X = MonoHelp.GetAxis(AxisType.GamePadLeftHorizontal, controlType) * moveSpeed;
+            velocity.X = input.X * moveSpeed;
             //Jumping
             if (MonoHelp.GetButtonDown(controlType, Buttons.A) && grounded)
             {
@@ -84,12 +93,15 @@ namespace KataNeo.Entitites
                 grounded = false;
             }
             //Attacking
-            if (MonoHelp.GetButtonDown(controlType, Buttons.A) && !attacking)
+            if (MonoHelp.GetButtonDown(controlType, Buttons.X) && !attacking)
             {
                 //Attack
-                Debug.WriteLine("Attacking!");
+                if(input.X == 0 && input.Y == 0)
+                    attack = new Attack(new Vector2(attackOffset.X * (flipped ? -1 : 1), attackOffset.Y * input.Y));
+                else
+                    attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y));
                 //Set attack cooldown
-                attackTime = (float)gameTime.TotalGameTime.TotalMilliseconds;
+                attackTime = (float)gameTime.TotalGameTime.TotalSeconds;
                 attacking = true;
             }
         }
@@ -101,12 +113,25 @@ namespace KataNeo.Entitites
             //Debug.WriteLine($"Player {(int)controlType} position: {position}");
 #endif
             if (gameTime.TotalGameTime.TotalSeconds >= attackTime + attackDelay)
+            {
+                attack = null;
                 attacking = false;
+            }
+            else if (attacking)
+                attack.Update(gameTime, position);
 
             //Apply the velocity to the player
             position += new Vector2(velocity.X, -velocity.Y);
-            if (velocity.X > 0 && animator.curAnim != animData.GetAnim("Idle_R")) animator.ChangeAnim(animData.GetAnim("Idle_R"));
-            else if (velocity.X < 0 && animator.curAnim != animData.GetAnim("Idle_L")) animator.ChangeAnim(animData.GetAnim("Idle_L"));
+            if (velocity.X > 0 && animator.curAnim != animData.GetAnim("Idle_R"))
+            {
+                flipped = false;
+                animator.ChangeAnim(animData.GetAnim("Idle_R"));
+            }
+            else if (velocity.X < 0 && animator.curAnim != animData.GetAnim("Idle_L"))
+            {
+                flipped = true;
+                animator.ChangeAnim(animData.GetAnim("Idle_L"));
+            }
             velocity = Mathf.Lerp(velocity, baseVelocity, 0.05f);
             CheckCollision();
 
@@ -125,6 +150,7 @@ namespace KataNeo.Entitites
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+            if (attacking) attack.Draw(gameTime, spriteBatch); 
             spriteBatch.Draw(sprite, position, null, Color.White, 0f,
                 new Vector2(sprite.Width / 2, sprite.Height / 2), scale, SpriteEffects.None, 0f);
         }
@@ -168,7 +194,7 @@ namespace KataNeo.Entitites
                             if (top)
                             {
                                 //Decrease slightly to constantly collide and not fk up the grounded flag
-                                position.Y = tile.Rect.Top - sprite.Height / 2;
+                                position.Y = tile.Rect.Top - sprite.Height / 2 + 1;
                                 velocity.Y = 0;
                                 grounded = true;
                             }
@@ -191,7 +217,7 @@ namespace KataNeo.Entitites
                             if (top)
                             {
                                 //Decrease slightly to constantly collide and not fk up the grounded flag
-                                position.Y = tile.Rect.Top - sprite.Height / 2;
+                                position.Y = tile.Rect.Top - sprite.Height / 2 + 1;
                                 velocity.Y = 0;
                                 grounded = true;
                             }

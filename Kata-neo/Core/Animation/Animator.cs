@@ -6,7 +6,7 @@ namespace KataNeo.Animation
     public class Animator
     {
         public Anim curAnim;
-        private float curTime;
+        private float curTime = 0;
         private int index = 0;
 
         public Animator(ref Texture2D target, Anim anim)
@@ -17,6 +17,7 @@ namespace KataNeo.Animation
 
         public Texture2D Update(GameTime gameTime)
         {
+            if (curTime == 0) curTime = (float)gameTime.TotalGameTime.TotalSeconds;
             //Debug.WriteLine($"Current game time: {(float)gameTime.TotalGameTime.TotalMilliseconds}");
             if ((float)gameTime.TotalGameTime.TotalSeconds >= curTime + curAnim.intervals[index])
             {

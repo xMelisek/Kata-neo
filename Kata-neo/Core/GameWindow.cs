@@ -77,6 +77,7 @@ namespace KataNeo
 
         protected override void LoadContent()
         {
+            MonoHelp.Content = Content;
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             //mapManager.ExportMap("Maps/PlaygroundMap");
             mapManager.LoadMap("Maps/Map1", this);
@@ -89,6 +90,7 @@ namespace KataNeo
 
         protected override void Update(GameTime gameTime)
         {
+            MonoHelp.Content = Content;
             //Update input states for input handling
             MonoHelp.prevState = MonoHelp.curState;
             MonoHelp.curState = Keyboard.GetState();
@@ -147,11 +149,13 @@ namespace KataNeo
             //Debug drawing
             foreach (var tile in mapManager.tiles)
             {
-                _spriteBatch.Draw(debugOutline, tile.Rect, Color.White);
+                _spriteBatch.Draw(debugOutline, tile.Rect, Color.Green);
             }
-            foreach (var player in entityManager._players)
+            foreach (var player in entityManager.players)
             {
-                _spriteBatch.Draw(debugOutline, player.Rect, Color.White);
+                _spriteBatch.Draw(debugOutline, player.Rect, Color.Green);
+                if(player.attack != null)
+                    _spriteBatch.Draw(debugOutline, player.attack.Rect, Color.Red);
             }
 #endif
             _spriteBatch.End();

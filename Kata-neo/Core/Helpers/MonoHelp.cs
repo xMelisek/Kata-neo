@@ -1,12 +1,17 @@
-﻿using Microsoft.Xna.Framework;
+﻿using KataNeo.Animation;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 
 namespace KataNeo
 {
     public static class MonoHelp
     {
+        public static ContentManager Content { get; set; }
         #region Input Helpers
         public static KeyboardState prevState;
         public static KeyboardState curState;
@@ -182,25 +187,24 @@ namespace KataNeo
         /// <summary>
         /// Load all content from the specified folder
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="gameWindow">GameWindow to load the content with</param>
+        /// <typeparam name="T">Type of the content to load</typeparam>
         /// <param name="path">Path to the folder</param>
         /// <param name="recursive">Check the subfolders?</param>
         /// <returns></returns>
-        public static T[] LoadAllContent<T>(GameWindow gameWindow, string path, bool recursive)
+        public static T[] LoadAllContent<T>(string path, bool recursive)
         {
             List<T> contents = new List<T>();
             foreach (var content in Directory.GetFiles(path))
             {
                 var subString = content.Remove(0, 8);
                 subString = subString.Remove(subString.Length - 4);
-                contents.Add(gameWindow.Content.Load<T>(subString));
+                contents.Add(Content.Load<T>(subString));
             }
             if (recursive)
             {
                 foreach (var dir in Directory.GetDirectories(path))
                 {
-                    LoadAllContent<T>(gameWindow, dir, true);
+                    LoadAllContent<T>(dir, true);
                 }
             }
             return contents.ToArray();
@@ -209,13 +213,12 @@ namespace KataNeo
         /// <summary>
         /// Load all content from the specified folder
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="gameWindow">GameWindow to load the content with</param>
+        /// <typeparam name="T">Type of the content to load</typeparam>
         /// <param name="path">Path to the folder</param>
         /// <param name="recursive">Check the subfolders?</param>
         /// <param name="returnpath">Return relative paths to contents?</param>
         /// <returns>List of lists of content inside each folder and directories to them</returns>
-        public static (T[][], string[]) LoadAllContent<T>(GameWindow gameWindow, string path, bool recursive, bool returnpath)
+        public static (T[][], string[]) LoadAllContent<T>(string path, bool recursive, bool returnpath)
         {
             if (!path.Contains("Content/")) path = "Content/" + path;
             List<T[]> contents = new List<T[]>();
@@ -225,7 +228,7 @@ namespace KataNeo
             {
                 var subString = content.Remove(0, 8);
                 subString = subString.Remove(subString.Length - 4);
-                rootContents.Add(gameWindow.Content.Load<T>(subString));
+                rootContents.Add(Content.Load<T>(subString));
             }
             if (rootContents.Count > 0)
             {
@@ -235,10 +238,10 @@ namespace KataNeo
 
             if (recursive)
             {
-                //Fix the returning cuz it probably will return badly structured lists
+                //TODO: Fix the returning, it won't work properly with subfolder depth greater than 1
                 foreach (var dir in Directory.GetDirectories(path))
                 {
-                    T[] data = LoadAllContent<T>(gameWindow, dir, true);
+                    T[] data = LoadAllContent<T>(dir, true);
                     if (data.Length > 0)
                     {
                         contents.Add(data);
@@ -247,6 +250,38 @@ namespace KataNeo
                 }
             }
             return (contents.ToArray(), paths.ToArray());
+        }
+
+        /// <summary>
+        /// Get all animations from specified folder and its subdirectories
+        /// </summary>
+        /// <returns>Animation data</returns>
+        /// <exception cref="System.Exception"></exception>
+        public static AnimData GetAllAnims(string path)
+        {
+            //Get all of the animations with directories to them
+            var sheets = MonoHelp.LoadAllContent<Texture2D>(path, true, true);
+            List<Anim> anims = new List<Anim>();
+            //Add all of the animations and get the intervals from their directories
+            for (int i = 0; i < sheets.Item1.Length; i++)
+            {
+                anims.Add(new Anim(sheets.Item1[i], GetIntervals(sheets.Item2[i])));
+            }
+            if (anims.Count == 0) throw new System.Exception("There are no animations in directory");
+            //Shorten keywords for easier animation referencing
+            List<string> keys = new List<string>();
+            foreach (var dir in sheets.Item2)
+            {
+                int slash = dir.LastIndexOf('/');
+                int backslash = dir.LastIndexOf('\\');
+                keys.Add(backslash > slash ? dir.Remove(0, backslash + 1) : dir.Remove(0, slash + 1));
+            }
+            return new AnimData(anims.ToArray(), keys.ToArray());
+        }
+
+        private static float[] GetIntervals(string path)
+        {
+            return JsonSerializer.Deserialize<float[]>(File.ReadAllText("Data/Animations" + path.Remove(0, 7) + "/intervals.json"));
         }
         #endregion
     }
