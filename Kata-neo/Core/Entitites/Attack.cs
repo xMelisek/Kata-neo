@@ -36,6 +36,7 @@ namespace KataNeo.Entities
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch) 
         {
+            // Get Attack position and rotation for the attack
             float rotation;
             if (dir.X > 0)
             {

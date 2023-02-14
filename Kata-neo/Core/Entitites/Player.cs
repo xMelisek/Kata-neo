@@ -34,7 +34,7 @@ namespace KataNeo.Entitites
 
         private Vector2 attackOffset = new Vector2(50, 50);
         float attackTime;
-        float attackDelay = 0.225f;
+        float attackDelay = 0.075f;
         bool grounded = false;
         bool isAlive = true;
         bool attacking = false;
