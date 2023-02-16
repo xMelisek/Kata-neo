@@ -51,6 +51,7 @@ namespace KataNeo
             _graphics.PreferredBackBufferHeight = 720;
             _graphics.ApplyChanges();
 
+            MonoHelp.GameWindow = this;
             //Init states so errors wont be thrown at the first frame
             MonoHelp.curState = Keyboard.GetState();
             List<GamePadState> padStates = new List<GamePadState>();

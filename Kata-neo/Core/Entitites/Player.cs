@@ -69,9 +69,9 @@ namespace KataNeo.Entitites
             {
                 //Attack
                 if (input.X == 0 && input.Y == 0)
-                    attack = new Attack(new Vector2(attackOffset.X * (flipped ? -1 : 1), attackOffset.Y * input.Y));
+                    attack = new Attack(new Vector2(attackOffset.X * (flipped ? -1 : 1), attackOffset.Y * input.Y), this);
                 else
-                    attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y));
+                    attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y), this);
                 //Set attack cooldown
                 attackTime = (float)gameTime.TotalGameTime.TotalSeconds;
                 attacking = true;
@@ -97,9 +97,9 @@ namespace KataNeo.Entitites
             {
                 //Attack
                 if(input.X == 0 && input.Y == 0)
-                    attack = new Attack(new Vector2(attackOffset.X * (flipped ? -1 : 1), attackOffset.Y * input.Y));
+                    attack = new Attack(new Vector2(attackOffset.X * (flipped ? -1 : 1), attackOffset.Y * input.Y), this);
                 else
-                    attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y));
+                    attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y), this);
                 //Set attack cooldown
                 attackTime = (float)gameTime.TotalGameTime.TotalSeconds;
                 attacking = true;

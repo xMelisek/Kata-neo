@@ -11,6 +11,7 @@ namespace KataNeo
 {
     public static class MonoHelp
     {
+        public static GameWindow GameWindow { get; set; }
         public static ContentManager Content { get; set; }
         #region Input Helpers
         public static KeyboardState prevState;

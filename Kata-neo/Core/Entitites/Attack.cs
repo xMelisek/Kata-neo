@@ -1,4 +1,5 @@
 ﻿using KataNeo.Animation;
+using KataNeo.Entitites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ namespace KataNeo.Entities
 {
     public class Attack
     {
+        Player player;
         Texture2D sprite;
         Vector2 position;
         Vector2 dir;
@@ -19,8 +21,9 @@ namespace KataNeo.Entities
             (int)(sprite.Width * scale.X), (int)(sprite.Height * scale.Y));
         }
 
-        public Attack(Vector2 offset)
+        public Attack(Vector2 offset, Player player)
         {
+            this.player = player;
             dir = offset;
             offset.Y = -offset.Y;
             this.offset = offset;
@@ -32,6 +35,7 @@ namespace KataNeo.Entities
         {
             position = pos + offset;
             sprite = animator.Update(gameTime);
+            MonoHelp.GameWindow.entityManager.CheckDamage(Rect, player);
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch) 

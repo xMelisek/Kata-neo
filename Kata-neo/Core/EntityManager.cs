@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 
@@ -14,12 +15,17 @@ namespace KataNeo
         private GameWindow gameWindow;
         public List<Entity> entities;
         public List<Player> players;
+        /// <summary>
+        /// Entities to be disposed. They are disposed at the end of the frame
+        /// </summary>
+        private List<Entity> _toDispose;
 
         public EntityManager(GameWindow gameWindow)
         {
             this.gameWindow = gameWindow;
             entities = new List<Entity>();
             players = new List<Player>();
+            _toDispose = new List<Entity>();
         }
 
         public void AddEntity(Entity entity)
@@ -36,7 +42,26 @@ namespace KataNeo
         {
             players.Add(new Player(controlType, mapManager, MonoHelp.GetAllAnims("Player"), position));
         }
+        
+        /// <summary>
+        /// Checks if the rect can damage other players.
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name=""></param>
+        public void CheckDamage(Rectangle rect, Player player)
+        {
+            foreach (var plr in players)
+            {
+                if(plr == player) continue;
+                if (rect.Intersects(plr.Rect))
+                {
+                    // Add the player to be damaged
+                    _toDispose.Add(plr);
+                }
+            }
+        }
 
+        #region Game Loop Updates
         public void Update(GameTime gametime)
         {
             foreach (var player in players)
@@ -47,6 +72,16 @@ namespace KataNeo
                     player.GamepadUpdate(gametime);
                 player.Update(gametime);
             }
+            foreach(var entity in _toDispose)
+            {
+                if (entity.GetType() == typeof(Player))
+                {
+                    players.Remove((Player)entity);
+                    if (players.Count == 1) Debug.WriteLine($"{players[0]} won!");
+                }
+                else entities.Remove(entity);
+            }
+            _toDispose.Clear();
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -61,6 +96,7 @@ namespace KataNeo
                 player.Draw(gameTime, spriteBatch);
             }
         }
+        #endregion
     }
 
     public struct InputState
