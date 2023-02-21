@@ -67,6 +67,10 @@ namespace KataNeo.Entitites
             //Attacking
             if (MonoHelp.GetKeyDown(Keys.K) && !attacking)
             {
+                if(!grounded)
+                {
+                    velocity += new Vector2(10 * input.X, 10 * input.Y);
+                }
                 //Attack
                 if (input.X == 0 && input.Y == 0)
                     attack = new Attack(new Vector2(attackOffset.X * (flipped ? -1 : 1), attackOffset.Y * input.Y), this);
@@ -95,8 +99,12 @@ namespace KataNeo.Entitites
             //Attacking
             if (MonoHelp.GetButtonDown(controlType, Buttons.X) && !attacking)
             {
+                if (!grounded)
+                {
+                    velocity += new Vector2(10 * input.X, 10 * input.Y);
+                }
                 //Attack
-                if(input.X == 0 && input.Y == 0)
+                if (input.X == 0 && input.Y == 0)
                     attack = new Attack(new Vector2(attackOffset.X * (flipped ? -1 : 1), attackOffset.Y * input.Y), this);
                 else
                     attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y), this);
