@@ -20,8 +20,8 @@ namespace KataNeo.Entitites
         public Attack attack;
 
         bool isAlive = true;
-
-        //Movmeent vars
+        
+        //Movement vars
         public Vector2 position;
         public Vector2 scale = new Vector2(4, 4);
         public Rectangle Rect
@@ -39,9 +39,11 @@ namespace KataNeo.Entitites
         //Attack vars
         private Vector2 attackOffset = new Vector2(50, 50);
         float attackTime;
+        float attackCooldown = 0.3f;
         float attackDelay = 0.075f;
         float attackForce = 15f;
         bool attacking = false;
+        bool canAttack = true;
 
         public Player(ControlType controlType, MapManager mapManager, AnimData animData, Vector2 position)
         {
@@ -68,7 +70,7 @@ namespace KataNeo.Entitites
                 grounded = false;
             }
             //Attacking
-            if (MonoHelp.GetKeyDown(Keys.K) && !attacking)
+            if (MonoHelp.GetKeyDown(Keys.K) && canAttack)
             {
                 animator.ChangeAnim(animData.GetAnim(flipped ? "Swing_L" : "Swing_R"));
                 if(!grounded)
@@ -82,6 +84,7 @@ namespace KataNeo.Entitites
                     attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y), this);
                 //Set attack cooldown
                 attackTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                canAttack = false;
                 attacking = true;
             }
         }
@@ -101,7 +104,7 @@ namespace KataNeo.Entitites
                 grounded = false;
             }
             //Attacking
-            if (MonoHelp.GetButtonDown(controlType, Buttons.X) && !attacking)
+            if (MonoHelp.GetButtonDown(controlType, Buttons.X) && canAttack)
             {
                 if (!grounded)
                 {
@@ -114,6 +117,7 @@ namespace KataNeo.Entitites
                     attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y), this);
                 //Set attack cooldown
                 attackTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                canAttack = false;
                 attacking = true;
             }
         }
@@ -123,6 +127,11 @@ namespace KataNeo.Entitites
             sprite = animator.Update(gameTime);
             Debug.WriteLine($"Player {(int)controlType} velocity: {velocity}");
             //Attack swing animating and cooldown
+            if (gameTime.TotalGameTime.TotalSeconds >= attackTime + attackCooldown && !canAttack)
+            {
+                canAttack = true;
+            }
+
             if (gameTime.TotalGameTime.TotalSeconds >= attackTime + attackDelay && attacking)
             {
                 attack = null;

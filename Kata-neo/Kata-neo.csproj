@@ -11,15 +11,12 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Data\Animations\Attack\intervals.json" />
-    <None Remove="Data\Animations\Player\Swing_L\intervals.json" />
-    <None Remove="Data\Animations\Player\Swing_R\intervals.json" />
-    <None Remove="Icon.ico" />
-    <None Remove="Icon.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icon.ico" />
-    <EmbeddedResource Include="Icon.bmp" />
+    <EmbeddedResource Include="Icon.ico" >
+      <LogicalName>Icon.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icon.bmp" >
+      <LogicalName>Icon.bmp</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
@@ -37,17 +34,14 @@
     <Content Include="Data\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Custom\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   
   <ItemGroup>
     <Compile Remove="Build\**" />
     <EmbeddedResource Remove="Build\**" />
     <None Remove="Build\**" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Content Include="Custom\DummyMapJson.knm" />
-    <Content Include="Custom\DummyMapXML.knm" />
-    <Content Include="Custom\README.md" />
   </ItemGroup>
 </Project>
