@@ -12,6 +12,8 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Data\Animations\Attack\intervals.json" />
+    <None Remove="Data\Animations\Player\Swing_L\intervals.json" />
+    <None Remove="Data\Animations\Player\Swing_R\intervals.json" />
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
   </ItemGroup>

@@ -10,11 +10,20 @@ namespace KataNeo.Entitites
 {
     public class Player : Entity
     {
-        public ControlType controlType;
+        //General vars
+        public Texture2D sprite;
+        public AnimData animData;
+        public Animator animator;
 
-        //Position and movement related vars
+        public ControlType controlType;
+        private MapManager mapManager;        
+        public Attack attack;
+
+        bool isAlive = true;
+
+        //Movmeent vars
         public Vector2 position;
-        public Vector2 scale = new Vector2(1, 1);
+        public Vector2 scale = new Vector2(4, 4);
         public Rectangle Rect
         {
             get => new Rectangle((int)(position.X - sprite.Width * scale.X / 2f), (int)(position.Y - sprite.Height * scale.Y / 2f),
@@ -23,22 +32,16 @@ namespace KataNeo.Entitites
         private Vector2 input;
         public Vector2 velocity;
         private readonly Vector2 baseVelocity = new Vector2(0, -19.62f);
-        public float moveSpeed = 10f;
+        public float moveSpeed = 3f;
+        private bool flipped = false;
+        bool grounded = false;
 
-        public Texture2D sprite;
-        public AnimData animData;
-        public Animator animator;
-        public Attack attack;
-
-        private MapManager mapManager;
-
+        //Attack vars
         private Vector2 attackOffset = new Vector2(50, 50);
         float attackTime;
         float attackDelay = 0.075f;
-        bool grounded = false;
-        bool isAlive = true;
+        float attackForce = 15f;
         bool attacking = false;
-        private bool flipped;
 
         public Player(ControlType controlType, MapManager mapManager, AnimData animData, Vector2 position)
         {
@@ -56,8 +59,8 @@ namespace KataNeo.Entitites
         public void KeyboardUpdate(GameTime gameTime)
         {
             input = new Vector2(MonoHelp.GetAxis(AxisType.HorizontalKeyboard), MonoHelp.GetAxis(AxisType.VerticalKeyboard));
-            //Horizontal movement
-            velocity.X = input.X * moveSpeed;
+            //Horizontal movement, don't add when player is too fast horizontally
+            if(Math.Abs(velocity.X) < 6) velocity.X += input.X * moveSpeed;
             //Jumping
             if (MonoHelp.GetKeyDown(Keys.Space) && grounded)
             {
@@ -67,9 +70,10 @@ namespace KataNeo.Entitites
             //Attacking
             if (MonoHelp.GetKeyDown(Keys.K) && !attacking)
             {
+                animator.ChangeAnim(animData.GetAnim(flipped ? "Swing_L" : "Swing_R"));
                 if(!grounded)
                 {
-                    velocity += new Vector2(10 * input.X, 10 * input.Y);
+                    velocity += new Vector2(attackForce * input.X, attackForce * input.Y);
                 }
                 //Attack
                 if (input.X == 0 && input.Y == 0)
@@ -88,8 +92,8 @@ namespace KataNeo.Entitites
         public void GamepadUpdate(GameTime gameTime)
         {
             input = new Vector2(MonoHelp.GetAxis(AxisType.GamePadLeftHorizontal, controlType), MonoHelp.GetAxis(AxisType.GamePadLeftVertical, controlType));
-            //Horizontal movement
-            velocity.X = input.X * moveSpeed;
+            //Horizontal movement, don't add when player is too fast horizontally
+            if (Math.Abs(velocity.X) < 6) velocity.X = input.X * moveSpeed;
             //Jumping
             if (MonoHelp.GetButtonDown(controlType, Buttons.A) && grounded)
             {
@@ -101,7 +105,7 @@ namespace KataNeo.Entitites
             {
                 if (!grounded)
                 {
-                    velocity += new Vector2(10 * input.X, 10 * input.Y);
+                    velocity += new Vector2(attackForce * input.X, attackForce * input.Y);
                 }
                 //Attack
                 if (input.X == 0 && input.Y == 0)
@@ -117,42 +121,47 @@ namespace KataNeo.Entitites
         public override void Update(GameTime gameTime)
         {
             sprite = animator.Update(gameTime);
-#if DEBUG
-            //Debug.WriteLine($"Player {(int)controlType} position: {position}");
-#endif
-            if (gameTime.TotalGameTime.TotalSeconds >= attackTime + attackDelay)
+            Debug.WriteLine($"Player {(int)controlType} velocity: {velocity}");
+            //Attack swing animating and cooldown
+            if (gameTime.TotalGameTime.TotalSeconds >= attackTime + attackDelay && attacking)
             {
                 attack = null;
                 attacking = false;
+                animator.ChangeAnim(animData.GetAnim(flipped ? "Idle_L" : "Idle_R"));
             }
             else if (attacking)
                 attack.Update(gameTime, position);
 
-            //Apply the velocity to the player
+            //Apply the velocity to the player and dampen it if grounded and not moving
+            if (grounded && input.X == 0) velocity.X *= 0.95f;
             position += new Vector2(velocity.X, -velocity.Y);
-            if (velocity.X > 0 && animator.curAnim != animData.GetAnim("Idle_R"))
+
+            //Set idle animation if not performing an action to the right direction
+            if (velocity.X > 0 && animator.curAnim != animData.GetAnim("Idle_R") && !attacking)
             {
                 flipped = false;
                 animator.ChangeAnim(animData.GetAnim("Idle_R"));
             }
-            else if (velocity.X < 0 && animator.curAnim != animData.GetAnim("Idle_L"))
+            else if (velocity.X < 0 && animator.curAnim != animData.GetAnim("Idle_L") && !attacking)
             {
                 flipped = true;
                 animator.ChangeAnim(animData.GetAnim("Idle_L"));
             }
+
+            //Decrease velocity and check collision
             velocity = Mathf.Lerp(velocity, baseVelocity, 0.05f);
             CheckCollision();
 
             //Check if the player is on the bottom of the screen so he can jump
-            if (position.Y > 1080 - sprite.Height / 2)
+            if (position.Y > 1080 - sprite.Height * scale.Y / 2)
             {
                 grounded = true;
             }
             //Confine the player within the game window
             if (isAlive)
             {
-                position = new Vector2(Mathf.Clamp(position.X, 0 + sprite.Width / 2, 1920 - sprite.Width / 2),
-                    Mathf.Clamp(position.Y, 0 + sprite.Height / 2, 1080 - sprite.Height / 2));
+                position = new Vector2(Mathf.Clamp(position.X, 0 + sprite.Width * scale.X / 2, 1920 - sprite.Width * scale.X / 2),
+                    Mathf.Clamp(position.Y, 0 + sprite.Height * scale.Y / 2, 1080 - sprite.Height * scale.Y / 2));
             }
         }
 
@@ -194,7 +203,7 @@ namespace KataNeo.Entitites
                     {
                         if (Math.Abs(distVec.X) < Math.Abs(distVec.Y))
                         {
-                            position.X = tile.Rect.Right + sprite.Width / 2;
+                            position.X = tile.Rect.Right + sprite.Width * scale.X / 2;
                             velocity.X = 0;
                         }
                         else
@@ -202,13 +211,13 @@ namespace KataNeo.Entitites
                             if (top)
                             {
                                 //Decrease slightly to constantly collide and not fk up the grounded flag
-                                position.Y = tile.Rect.Top - sprite.Height / 2 + 1;
+                                position.Y = tile.Rect.Top - sprite.Height * scale.Y / 2 + 1;
                                 velocity.Y = 0;
                                 grounded = true;
                             }
                             else
                             {
-                                position.Y = tile.Rect.Bottom + sprite.Height / 2;
+                                position.Y = tile.Rect.Bottom + sprite.Height * scale.Y / 2;
                                 velocity.Y = 0;
                             }
                         }
@@ -217,7 +226,7 @@ namespace KataNeo.Entitites
                     {
                         if (Math.Abs(distVec.X) < Math.Abs(distVec.Y))
                         {
-                            position.X = tile.Rect.Left - sprite.Width / 2;
+                            position.X = tile.Rect.Left - sprite.Width * scale.X / 2;
                             velocity.X = 0;
                         }
                         else
@@ -225,13 +234,13 @@ namespace KataNeo.Entitites
                             if (top)
                             {
                                 //Decrease slightly to constantly collide and not fk up the grounded flag
-                                position.Y = tile.Rect.Top - sprite.Height / 2 + 1;
+                                position.Y = tile.Rect.Top - sprite.Height * scale.Y  / 2 + 1;
                                 velocity.Y = 0;
                                 grounded = true;
                             }
                             else
                             {
-                                position.Y = tile.Rect.Bottom + sprite.Height / 2;
+                                position.Y = tile.Rect.Bottom + sprite.Height * scale.Y / 2;
                                 velocity.Y = 0;
                             }
                         }
