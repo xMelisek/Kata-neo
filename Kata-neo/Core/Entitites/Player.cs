@@ -40,7 +40,6 @@ namespace KataNeo.Entitites
 
         //Attack vars
         private Vector2 attackOffset = new Vector2(50, 50);
-        float attackTime;
         float attackCooldown = 0.3f;
         float attackDelay = 0.075f;
         float attackForce = 15f;
@@ -85,7 +84,8 @@ namespace KataNeo.Entitites
                 else
                     attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y), this);
                 //Set attack cooldown
-                attackTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                MonoHelp.AddTimer(attackDelay, EndSwing);
+                MonoHelp.AddTimer(attackCooldown, RenewAttackCD);
                 canAttack = false;
                 attacking = true;
             }
@@ -118,7 +118,6 @@ namespace KataNeo.Entitites
                 else
                     attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y), this);
                 //Set attack cooldown
-                attackTime = (float)gameTime.TotalGameTime.TotalSeconds;
                 canAttack = false;
                 attacking = true;
             }
@@ -127,19 +126,7 @@ namespace KataNeo.Entitites
         public override void Update(GameTime gameTime)
         {
             Debug.WriteLine($"Player {(int)controlType} velocity: {velocity}");
-            //Attack swing animating and cooldown
-            if (gameTime.TotalGameTime.TotalSeconds >= attackTime + attackCooldown && !canAttack)
-            {
-                canAttack = true;
-            }
-
-            if (gameTime.TotalGameTime.TotalSeconds >= attackTime + attackDelay && attacking)
-            {
-                attack = null;
-                attacking = false;
-                animator.ChangeAnim(animData.GetAnim(flipped ? "Idle_L" : "Idle_R"));
-            }
-            else if (attacking)
+            if (attacking)
                 attack.Update(gameTime, position);
 
             //Apply the velocity to the player and dampen it if grounded and not moving
@@ -184,6 +171,15 @@ namespace KataNeo.Entitites
         #endregion
 
         void UpdateTex(Texture2D tex) => sprite = tex;
+
+        void EndSwing()
+        {
+            attack = null;
+            attacking = false;
+            animator.ChangeAnim(animData.GetAnim(flipped ? "Idle_L" : "Idle_R"));
+        }
+
+        void RenewAttackCD() => canAttack = true;
 
         /// <summary>
         /// Take damage
