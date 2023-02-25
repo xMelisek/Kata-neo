@@ -53,7 +53,7 @@ namespace KataNeo.Entitites
             this.controlType = controlType;
             this.mapManager = mapManager;
             this.animData = animData;
-            animator = new Animator(ref sprite, animData.GetAnim("Idle_R"));
+            animator = new Animator(ref sprite, animData.GetAnim("Idle_R"), UpdateTex);
         }
 
         #region Game Loop Updates
@@ -126,7 +126,6 @@ namespace KataNeo.Entitites
 
         public override void Update(GameTime gameTime)
         {
-            sprite = animator.Update(gameTime);
             Debug.WriteLine($"Player {(int)controlType} velocity: {velocity}");
             //Attack swing animating and cooldown
             if (gameTime.TotalGameTime.TotalSeconds >= attackTime + attackCooldown && !canAttack)
@@ -183,6 +182,8 @@ namespace KataNeo.Entitites
                 new Vector2(sprite.Width / 2, sprite.Height / 2), scale, SpriteEffects.None, 0f);
         }
         #endregion
+
+        void UpdateTex(Texture2D tex) => sprite = tex;
 
         /// <summary>
         /// Take damage

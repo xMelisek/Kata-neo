@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 
@@ -188,31 +189,31 @@ namespace KataNeo
 
         public delegate void TimerCallback();
         static float curTime;
-        static List<Timer> timers = new List<Timer>();
+        static List<Timer> _toAdd = new List<Timer>();
+        static List<Timer> _timers = new List<Timer>();
 
         /// <summary>
         /// Add a timer and call the function after time passes
         /// </summary>
         /// <param name="time">After how many milliseconds should the callback fire up</param>
         /// <param name="callback">Function to callback to</param>
-        public static void AddTimer(float time, TimerCallback callback) => timers.Add(new Timer(curTime + time, callback));
+        public static void AddTimer(float seconds, TimerCallback callback) => _toAdd.Add(new Timer(curTime + seconds, callback));
 
         public static void Update(GameTime gameTime)
         {
-            curTime = (float)gameTime.TotalGameTime.TotalMilliseconds;
             List<Timer> toDispose = new List<Timer>();
-            foreach (var timer in timers)
+            curTime = (float)gameTime.TotalGameTime.TotalSeconds;
+            foreach (var timer in _timers)
             {
-                if (gameTime.TotalGameTime.TotalMilliseconds >= timer.timerEnd)
+                if (gameTime.TotalGameTime.TotalSeconds >= timer.timerEnd)
                 {
                     timer.callback();
                     toDispose.Add(timer);
                 }
             }
-            foreach (var timer in toDispose)
-            {
-                timers.Remove(timer);
-            }
+            _timers = _timers.Except(toDispose).ToList();
+            _timers.AddRange(_toAdd);
+            _toAdd.Clear();
         }
 
         struct Timer

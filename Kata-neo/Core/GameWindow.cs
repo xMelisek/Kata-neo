@@ -86,8 +86,6 @@ namespace KataNeo
             transitionTex = Content.Load<Texture2D>("Transition");
             //mapManager.ExportMap("Maps/PlaygroundMap");
             mapManager.LoadMap("Maps/Map1", this);
-            //Comment for now as first player defaulting to keyboard may not be the wanted result
-            //entityManager.AddPlayer(ControlType.Keyboard, mapManager);
 #if DEBUG
             debugOutline = Content.Load<Texture2D>("DebugSprites/OutlineCollider");
 #endif

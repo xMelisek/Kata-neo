@@ -52,7 +52,7 @@ namespace KataNeo
                 }
                 catch (JsonException)
                 {
-                    throw new Exception("File format was not in json/xml or it has errors in styntax");
+                    throw new Exception("File format was not in json/xml or it has errors in syntax");
                 }
             }
         }
@@ -71,11 +71,6 @@ namespace KataNeo
             var serializer = new XmlSerializer(typeof(Map));
             TextWriter writer = new StreamWriter(path);
             serializer.Serialize(writer, map);
-        }
-
-        public void StartMap()
-        {
-
         }
 
         public void SwitchMap()

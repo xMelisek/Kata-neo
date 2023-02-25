@@ -31,13 +31,15 @@ namespace KataNeo.Entities
             offset.Y = -offset.Y;
             this.offset = offset;
             AnimData animData = MonoHelp.GetAllAnims("Attack");
-            animator = new Animator(ref sprite, animData.GetAnim(0));
+            animator = new Animator(ref sprite, animData.GetAnim(0), UpdateTex);
         }
 
+        void UpdateTex(Texture2D tex) => sprite = tex;
+
+        #region Game Loop Updates
         public void Update(GameTime gameTime, Vector2 pos)
         {
             position = pos + offset;
-            sprite = animator.Update(gameTime);
             MonoHelp.GameWindow.entityManager.CheckDamage(this, player, 35);
         }
 
@@ -66,5 +68,6 @@ namespace KataNeo.Entities
             spriteBatch.Draw(sprite, position, null, Color.White, rotation,
                 new Vector2(sprite.Width / 2, sprite.Height / 2), scale, offset.X >= 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
         }
+        #endregion
     }
 }
