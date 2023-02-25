@@ -2,7 +2,7 @@
 using KataNeo.Entitites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace KataNeo.Entities
 {
@@ -21,6 +21,9 @@ namespace KataNeo.Entities
             (int)(sprite.Width * scale.X), (int)(sprite.Height * scale.Y));
         }
 
+        // List of players hit so they won't get hit every frame instakilling them
+        public List<Player> playersHit = new List<Player>();
+
         public Attack(Vector2 offset, Player player)
         {
             this.player = player;
@@ -35,10 +38,10 @@ namespace KataNeo.Entities
         {
             position = pos + offset;
             sprite = animator.Update(gameTime);
-            MonoHelp.GameWindow.entityManager.CheckDamage(Rect, player);
+            MonoHelp.GameWindow.entityManager.CheckDamage(this, player, 35);
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch) 
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             // Get Attack position and rotation for the attack
             float rotation;
@@ -48,7 +51,7 @@ namespace KataNeo.Entities
                 else if (dir.Y < 0) rotation = 45f;
                 else rotation = 0f;
             }
-            else if(dir.X < 0)
+            else if (dir.X < 0)
             {
                 if (dir.Y > 0) rotation = 45f;
                 else if (dir.Y < 0) rotation = -45f;

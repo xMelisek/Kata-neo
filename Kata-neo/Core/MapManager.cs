@@ -87,7 +87,7 @@ namespace KataNeo
         #region Game Loop Updates
         public void Update(GameTime gameTime)
         {
-            
+
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)

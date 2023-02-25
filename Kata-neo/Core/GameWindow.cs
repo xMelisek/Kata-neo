@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace KataNeo
 {
@@ -19,6 +18,10 @@ namespace KataNeo
         public EntityManager entityManager;
         public MapManager mapManager;
 
+        private bool transition;
+        private float transitionTime;
+        private Texture2D transitionTex;
+        private Vector2 transitionPos;
 #if DEBUG
         private Texture2D debugOutline;
 #endif
@@ -80,6 +83,7 @@ namespace KataNeo
         {
             MonoHelp.Content = Content;
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            transitionTex = Content.Load<Texture2D>("Transition");
             //mapManager.ExportMap("Maps/PlaygroundMap");
             mapManager.LoadMap("Maps/Map1", this);
             //Comment for now as first player defaulting to keyboard may not be the wanted result
@@ -133,6 +137,10 @@ namespace KataNeo
             }
             //Update entities
             entityManager.Update(gameTime);
+
+            if (transition) transitionPos = Mathf.Lerp(transitionPos, new Vector2(-320, 0), 0.05f);
+            else transitionPos = new Vector2(2560, 0);
+
             base.Update(gameTime);
         }
 
@@ -159,9 +167,15 @@ namespace KataNeo
                     _spriteBatch.Draw(debugOutline, player.attack.Rect, Color.Red);
             }
 #endif
+            if (transition) _spriteBatch.Draw(transitionTex, transitionPos, Color.White);
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public void Transition()
+        {
+            transition = true;
         }
     }
 }

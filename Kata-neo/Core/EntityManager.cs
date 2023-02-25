@@ -1,12 +1,9 @@
-﻿using KataNeo.Animation;
+﻿using KataNeo.Entities;
 using KataNeo.Entitites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Text.Json;
 
 namespace KataNeo
 {
@@ -42,21 +39,22 @@ namespace KataNeo
         {
             players.Add(new Player(controlType, mapManager, MonoHelp.GetAllAnims("Player"), position));
         }
-        
+
         /// <summary>
-        /// Checks if the rect can damage other players.
+        /// Checks if the attack can damage other players.
         /// </summary>
-        /// <param name="rect"></param>
-        /// <param name=""></param>
-        public void CheckDamage(Rectangle rect, Player player)
+        /// <param name="attack">The attack from a player</param>
+        /// <param name="player">Player who casted this rect so he will be ingored in damage check</param>
+        /// <param name="val">Damage value</param>
+        public void CheckDamage(Attack attack, Player player, int val)
         {
             foreach (var plr in players)
             {
-                if(plr == player) continue;
-                if (rect.Intersects(plr.Rect))
+                if (plr == player) continue;
+                if (attack.Rect.Intersects(plr.Rect) && !attack.playersHit.Contains(plr))
                 {
-                    // Add the player to be damaged
-                    _toDispose.Add(plr);
+                    attack.playersHit.Add(plr);
+                    if (plr.TakeDamage(val)) _toDispose.Add(plr);
                 }
             }
         }
@@ -72,12 +70,12 @@ namespace KataNeo
                     player.GamepadUpdate(gametime);
                 player.Update(gametime);
             }
-            foreach(var entity in _toDispose)
+            foreach (var entity in _toDispose)
             {
                 if (entity.GetType() == typeof(Player))
                 {
                     players.Remove((Player)entity);
-                    if (players.Count == 1) Debug.WriteLine($"{players[0]} won!");
+                    if (players.Count == 1) MonoHelp.GameWindow.Transition();
                 }
                 else entities.Remove(entity);
             }

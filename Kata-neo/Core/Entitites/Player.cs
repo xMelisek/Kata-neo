@@ -16,11 +16,13 @@ namespace KataNeo.Entitites
         public Animator animator;
 
         public ControlType controlType;
-        private MapManager mapManager;        
+        private MapManager mapManager;
         public Attack attack;
 
-        bool isAlive = true;
-        
+        public int Health { get; private set; } = 100;
+        //Unused for now, maybe will be used for a lying body after death
+        bool alive = true;
+
         //Movement vars
         public Vector2 position;
         public Vector2 scale = new Vector2(4, 4);
@@ -62,7 +64,7 @@ namespace KataNeo.Entitites
         {
             input = new Vector2(MonoHelp.GetAxis(AxisType.HorizontalKeyboard), MonoHelp.GetAxis(AxisType.VerticalKeyboard));
             //Horizontal movement, don't add when player is too fast horizontally
-            if(Math.Abs(velocity.X) < 6) velocity.X += input.X * moveSpeed;
+            if (Math.Abs(velocity.X) < 6) velocity.X += input.X * moveSpeed;
             //Jumping
             if (MonoHelp.GetKeyDown(Keys.Space) && grounded)
             {
@@ -73,7 +75,7 @@ namespace KataNeo.Entitites
             if (MonoHelp.GetKeyDown(Keys.K) && canAttack)
             {
                 animator.ChangeAnim(animData.GetAnim(flipped ? "Swing_L" : "Swing_R"));
-                if(!grounded)
+                if (!grounded)
                 {
                     velocity += new Vector2(attackForce * input.X, attackForce * input.Y);
                 }
@@ -167,7 +169,7 @@ namespace KataNeo.Entitites
                 grounded = true;
             }
             //Confine the player within the game window
-            if (isAlive)
+            if (alive)
             {
                 position = new Vector2(Mathf.Clamp(position.X, 0 + sprite.Width * scale.X / 2, 1920 - sprite.Width * scale.X / 2),
                     Mathf.Clamp(position.Y, 0 + sprite.Height * scale.Y / 2, 1080 - sprite.Height * scale.Y / 2));
@@ -176,11 +178,23 @@ namespace KataNeo.Entitites
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            if (attacking) attack.Draw(gameTime, spriteBatch); 
+            if (attacking) attack.Draw(gameTime, spriteBatch);
             spriteBatch.Draw(sprite, position, null, Color.White, 0f,
                 new Vector2(sprite.Width / 2, sprite.Height / 2), scale, SpriteEffects.None, 0f);
         }
         #endregion
+
+        /// <summary>
+        /// Take damage
+        /// </summary>
+        /// <param name="val">Damage to be taken</param>
+        /// <returns>If the player died or not</returns>
+        public bool TakeDamage(int val)
+        {
+            Health -= val;
+            if (Health <= 0) return true;
+            return false;
+        }
 
         //I love making physics I love making physics I love making physics I love making physics I love making physics
         public void CheckCollision()
@@ -243,7 +257,7 @@ namespace KataNeo.Entitites
                             if (top)
                             {
                                 //Decrease slightly to constantly collide and not fk up the grounded flag
-                                position.Y = tile.Rect.Top - sprite.Height * scale.Y  / 2 + 1;
+                                position.Y = tile.Rect.Top - sprite.Height * scale.Y / 2 + 1;
                                 velocity.Y = 0;
                                 grounded = true;
                             }
