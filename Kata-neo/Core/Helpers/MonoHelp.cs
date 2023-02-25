@@ -195,7 +195,7 @@ namespace KataNeo
         /// <summary>
         /// Add a timer and call the function after time passes
         /// </summary>
-        /// <param name="time">After how many milliseconds should the callback fire up</param>
+        /// <param name="seconds">After how many seconds should the callback fire up</param>
         /// <param name="callback">Function to callback to</param>
         public static void AddTimer(float seconds, TimerCallback callback) => _toAdd.Add(new Timer(curTime + seconds, callback));
 
