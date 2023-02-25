@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 
 namespace KataNeo
 {
@@ -156,19 +157,19 @@ namespace KataNeo
             switch (axisType)
             {
                 case AxisType.HorizontalKeyboard:
-                {
-                    float vec = 0;
-                    if (GetKey(Keys.D)) vec += 1f;
-                    if (GetKey(Keys.A)) vec -= 1f;
-                    return vec;
-                }
+                    {
+                        float vec = 0;
+                        if (GetKey(Keys.D)) vec += 1f;
+                        if (GetKey(Keys.A)) vec -= 1f;
+                        return vec;
+                    }
                 case AxisType.VerticalKeyboard:
-                {
-                    float vec = 0;
-                    if (GetKey(Keys.W)) vec += 1f;
-                    if (GetKey(Keys.S)) vec -= 1f;
-                    return vec;
-                }
+                    {
+                        float vec = 0;
+                        if (GetKey(Keys.W)) vec += 1f;
+                        if (GetKey(Keys.S)) vec -= 1f;
+                        return vec;
+                    }
                 case AxisType.GamePadLeftHorizontal:
                     return gamePadStates[(int)controlType - 1].ThumbSticks.Left.X;
                 case AxisType.GamePadLeftVertical:
@@ -181,6 +182,51 @@ namespace KataNeo
                     return 0f;
             }
         }
+        #endregion
+
+        #region Timers
+
+        public delegate void TimerCallback();
+        static float curTime;
+        static List<Timer> timers = new List<Timer>();
+
+        /// <summary>
+        /// Add a timer and call the function after time passes
+        /// </summary>
+        /// <param name="time">After how many milliseconds should the callback fire up</param>
+        /// <param name="callback">Function to callback to</param>
+        public static void AddTimer(float time, TimerCallback callback) => timers.Add(new Timer(curTime + time, callback));
+
+        public static void Update(GameTime gameTime)
+        {
+            curTime = (float)gameTime.TotalGameTime.TotalMilliseconds;
+            List<Timer> toDispose = new List<Timer>();
+            foreach (var timer in timers)
+            {
+                if (gameTime.TotalGameTime.TotalMilliseconds >= timer.timerEnd)
+                {
+                    timer.callback();
+                    toDispose.Add(timer);
+                }
+            }
+            foreach (var timer in toDispose)
+            {
+                timers.Remove(timer);
+            }
+        }
+
+        struct Timer
+        {
+            public float timerEnd;
+            public TimerCallback callback;
+
+            public Timer(float timerEnd, TimerCallback callback)
+            {
+                this.timerEnd = timerEnd;
+                this.callback = callback;
+            }
+        }
+
         #endregion
 
         //TODO in this region

@@ -96,6 +96,7 @@ namespace KataNeo
         protected override void Update(GameTime gameTime)
         {
             MonoHelp.Content = Content;
+            MonoHelp.Update(gameTime);
             //Update input states for input handling
             MonoHelp.prevState = MonoHelp.curState;
             MonoHelp.curState = Keyboard.GetState();
