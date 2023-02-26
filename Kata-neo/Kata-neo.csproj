@@ -11,10 +11,10 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icon.ico" >
+    <EmbeddedResource Include="Icon.ico">
       <LogicalName>Icon.ico</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Icon.bmp" >
+    <EmbeddedResource Include="Icon.bmp">
       <LogicalName>Icon.bmp</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
@@ -43,5 +43,10 @@
     <Compile Remove="Build\**" />
     <EmbeddedResource Remove="Build\**" />
     <None Remove="Build\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="Data\Animations\Player\Run_L\intervals.json" />
+    <None Remove="Data\Animations\Player\Run_R\intervals.json" />
   </ItemGroup>
 </Project>

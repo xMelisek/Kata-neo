@@ -125,7 +125,7 @@ namespace KataNeo.Entitites
 
         public override void Update(GameTime gameTime)
         {
-            Debug.WriteLine($"Player {(int)controlType} velocity: {velocity}");
+            //Debug.WriteLine($"Player {(int)controlType} velocity: {velocity}");
             if (attacking)
                 attack.Update(gameTime, position);
 
@@ -134,15 +134,17 @@ namespace KataNeo.Entitites
             position += new Vector2(velocity.X, -velocity.Y);
 
             //Set idle animation if not performing an action to the right direction
-            if (velocity.X > 0 && animator.curAnim != animData.GetAnim("Idle_R") && !attacking)
+            flipped = input.X < 0;
+            if (!attacking)
             {
-                flipped = false;
-                animator.ChangeAnim(animData.GetAnim("Idle_R"));
-            }
-            else if (velocity.X < 0 && animator.curAnim != animData.GetAnim("Idle_L") && !attacking)
-            {
-                flipped = true;
-                animator.ChangeAnim(animData.GetAnim("Idle_L"));
+                if (MathF.Abs(velocity.X) <= 0.5)
+                {
+                    animator.ChangeAnim(animData.GetAnim(flipped ? "Idle_L" : "Idle_R"));
+                }
+                else
+                {
+                    animator.ChangeAnim(animData.GetAnim(flipped ? "Run_L" : "Run_R"));
+                }
             }
 
             //Decrease velocity and check collision

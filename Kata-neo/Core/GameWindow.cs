@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace KataNeo
 {
@@ -19,9 +20,8 @@ namespace KataNeo
         public MapManager mapManager;
 
         private bool transition;
-        private float transitionTime;
         private Texture2D transitionTex;
-        private Vector2 transitionPos;
+        private Vector2 transitionPos = new Vector2(-2560, 0);
 #if DEBUG
         private Texture2D debugOutline;
 #endif
@@ -48,7 +48,6 @@ namespace KataNeo
             _camera.Position = new Vector2(_resolutionIndependence.VirtualWidth / 2, _resolutionIndependence.VirtualHeight / 2);
             _usedControls = new List<ControlType>();
             entityManager = new EntityManager(this);
-            mapManager = new MapManager();
 
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.PreferredBackBufferHeight = 720;
@@ -83,9 +82,9 @@ namespace KataNeo
         {
             MonoHelp.Content = Content;
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            mapManager = new MapManager();
             transitionTex = Content.Load<Texture2D>("Transition");
             //mapManager.ExportMap("Maps/PlaygroundMap");
-            mapManager.LoadMap("Maps/Map1", this);
 #if DEBUG
             debugOutline = Content.Load<Texture2D>("DebugSprites/OutlineCollider");
 #endif
@@ -138,7 +137,11 @@ namespace KataNeo
             entityManager.Update(gameTime);
 
             if (transition) transitionPos = Mathf.Lerp(transitionPos, new Vector2(-320, 0), 0.05f);
-            else transitionPos = new Vector2(2560, 0);
+            else transitionPos = Mathf.Lerp(transitionPos, new Vector2(-2560, 0), 0.05f);
+            if (MathF.Floor(transitionPos.X) == -320 && transition)
+            {
+                mapManager.SwitchMap(UnTransition);
+            }
 
             base.Update(gameTime);
         }
@@ -166,7 +169,7 @@ namespace KataNeo
                     _spriteBatch.Draw(debugOutline, player.attack.Rect, Color.Red);
             }
 #endif
-            if (transition) _spriteBatch.Draw(transitionTex, transitionPos, Color.White);
+            _spriteBatch.Draw(transitionTex, transitionPos, Color.White);
             _spriteBatch.End();
 
             base.Draw(gameTime);
@@ -174,7 +177,18 @@ namespace KataNeo
 
         public void Transition()
         {
+            transitionPos = new Vector2(2560, 0);
             transition = true;
+        }
+
+        public void UnTransition()
+        {
+            entityManager.players.Clear();
+            foreach (var control in _usedControls)
+            {
+                entityManager.AddPlayer(control, mapManager, mapManager.spawnPoses[_usedControls.IndexOf(control)]);
+            }
+            transition = false;
         }
     }
 }

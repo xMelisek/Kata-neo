@@ -46,6 +46,7 @@ namespace KataNeo.Animation
 
         public void ChangeAnim(Anim anim)
         {
+            if (anim.Equals(curAnim)) return;
             curAnim = anim;
             index = 0;
         }

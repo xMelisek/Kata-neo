@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Xml.Serialization;
 
@@ -12,26 +13,35 @@ namespace KataNeo
 {
     public class MapManager
     {
+        public delegate void LoadCallback();
         private Texture2D bg;
         public Vector2[] spawnPoses;
         public List<Tile> tiles = new List<Tile>();
+        List<string> maps;
+
+        public MapManager() 
+        {
+            maps = Directory.GetFiles("Maps").ToList();
+            LoadMap(maps[0]);
+            maps.RemoveAt(0);
+        }
 
         #region Map Management
         //Load map from data
-        public void LoadMap(string path, GameWindow gameWindow)
+        public void LoadMap(string path)
         {
-            path += ".knm";
+            if (!path.EndsWith(".knm")) path += ".knm";
             try
             {
                 var serializer = new XmlSerializer(typeof(Map));
                 using var fileStream = new FileStream(path, FileMode.Open);
                 var map = (Map)serializer.Deserialize(fileStream);
-                bg = gameWindow.Content.Load<Texture2D>($"BGs/{map.BG}");
+                bg = MonoHelp.Content.Load<Texture2D>($"BGs/{map.BG}");
                 spawnPoses = map.SpawnPoses;
                 foreach (var tile in map.Tiles)
                 {
                     tiles.Add(new Tile(tile.Position, tile.Scale,
-                        gameWindow.Content.Load<Texture2D>($"Tiles/{tile.Sprite}")));
+                        MonoHelp.Content.Load<Texture2D>($"Tiles/{tile.Sprite}")));
                 }
                 return;
             }
@@ -41,12 +51,12 @@ namespace KataNeo
                 try
                 {
                     var map = JsonSerializer.Deserialize<Map>(File.ReadAllText(path));
-                    bg = gameWindow.Content.Load<Texture2D>($"BGs/{map.BG}");
+                    bg = MonoHelp.Content.Load<Texture2D>($"BGs/{map.BG}");
                     spawnPoses = map.SpawnPoses;
                     foreach (var tile in map.Tiles)
                     {
                         tiles.Add(new Tile(tile.Position, tile.Scale,
-                            gameWindow.Content.Load<Texture2D>($"Tiles/{tile.Sprite}")));
+                            MonoHelp.Content.Load<Texture2D>($"Tiles/{tile.Sprite}")));
                     }
                     return;
                 }
@@ -73,9 +83,15 @@ namespace KataNeo
             serializer.Serialize(writer, map);
         }
 
-        public void SwitchMap()
+        public void SwitchMap(LoadCallback callback)
         {
-
+            bg = null;
+            spawnPoses = null;
+            tiles.Clear();
+            if(maps.Count == 0) maps = Directory.GetFiles("Maps").ToList();
+            LoadMap(maps[0]);
+            maps.RemoveAt(0);
+            callback();
         }
         #endregion
 
