@@ -137,6 +137,7 @@ namespace KataNeo.Entitites
             position += new Vector2(velocity.X, -velocity.Y);
 
             //Set idle animation if not performing an action to the right direction
+            animator.Update(gameTime);
             flipped = input.X < 0;
             if (!attacking)
             {

@@ -8,6 +8,7 @@ namespace KataNeo.Animation
         public delegate void UpdateTexture(Texture2D texture);
         public Anim curAnim;
         UpdateTexture callback;
+        private float curTime = 0;
         private int index = 0;
 
         public Animator(ref Texture2D target, Anim anim, UpdateTexture callback)
@@ -15,7 +16,19 @@ namespace KataNeo.Animation
             curAnim = anim;
             target = curAnim.frames[0];
             this.callback = callback;
-            MonoHelp.AddTimer(curAnim.intervals[index], NextFrameCallback);
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            if (curTime == 0) curTime = (float)gameTime.TotalGameTime.TotalSeconds;
+            //Debug.WriteLine($"Current game time: {(float)gameTime.TotalGameTime.TotalMilliseconds}");
+            if ((float)gameTime.TotalGameTime.TotalSeconds >= curTime + curAnim.intervals[index])
+            {
+                curTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                if (index == curAnim.frames.Length - 1) index = 0;
+                else index++;
+            }
+            callback(curAnim.frames[index]);
         }
 
         #region Playback Manipulation
@@ -46,17 +59,9 @@ namespace KataNeo.Animation
 
         public void ChangeAnim(Anim anim)
         {
-            if (anim.Equals(curAnim)) return;
+            if (anim == curAnim) return;
             curAnim = anim;
             index = 0;
-        }
-
-        void NextFrameCallback()
-        {
-            if (index == curAnim.frames.Length - 1) index = 0;
-            else index++;
-            callback(curAnim.frames[index]);
-            MonoHelp.AddTimer(curAnim.intervals[index], NextFrameCallback);
         }
     }
 

@@ -39,6 +39,7 @@ namespace KataNeo.Entities
         #region Game Loop Updates
         public void Update(GameTime gameTime, Vector2 pos)
         {
+            animator.Update(gameTime);
             position = pos + offset;
             MonoHelp.GameWindow.entityManager.CheckDamage(this, player, 35);
         }
