@@ -108,6 +108,7 @@ namespace KataNeo.Entitites
             //Attacking
             if (MonoHelp.GetButtonDown(controlType, Buttons.X) && canAttack)
             {
+                animator.ChangeAnim(animData.GetAnim(flipped ? "Swing_L" : "Swing_R"));
                 if (!grounded)
                 {
                     velocity += new Vector2(attackForce * input.X, attackForce * input.Y);
@@ -118,6 +119,8 @@ namespace KataNeo.Entitites
                 else
                     attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y), this);
                 //Set attack cooldown
+                MonoHelp.AddTimer(attackDelay, EndSwing);
+                MonoHelp.AddTimer(attackCooldown, RenewAttackCD);
                 canAttack = false;
                 attacking = true;
             }

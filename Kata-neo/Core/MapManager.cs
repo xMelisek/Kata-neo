@@ -22,6 +22,7 @@ namespace KataNeo
         public MapManager() 
         {
             maps = Directory.GetFiles("Maps").ToList();
+            maps.AddRange(Directory.GetFiles("Custom", "*.knm"));
             LoadMap(maps[0]);
             maps.RemoveAt(0);
         }
@@ -88,7 +89,11 @@ namespace KataNeo
             bg = null;
             spawnPoses = null;
             tiles.Clear();
-            if(maps.Count == 0) maps = Directory.GetFiles("Maps").ToList();
+            if (maps.Count == 0)
+            {
+                maps = Directory.GetFiles("Maps").ToList();
+                maps.AddRange(Directory.GetFiles("Custom", "*.knm"));
+            }
             LoadMap(maps[0]);
             maps.RemoveAt(0);
             callback();
