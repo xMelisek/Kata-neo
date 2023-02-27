@@ -96,9 +96,9 @@ namespace KataNeo.Entitites
         /// </summary>
         public void GamepadUpdate(GameTime gameTime)
         {
-            input = new Vector2(MonoHelp.GetAxis(AxisType.GamePadLeftHorizontal, controlType), MonoHelp.GetAxis(AxisType.GamePadLeftVertical, controlType));
+            input = new Vector2(MathF.Ceiling(MonoHelp.GetAxis(AxisType.GamePadLeftHorizontal, controlType)), MathF.Ceiling(MonoHelp.GetAxis(AxisType.GamePadLeftVertical, controlType)));
             //Horizontal movement, don't add when player is too fast horizontally
-            if (Math.Abs(velocity.X) < 6) velocity.X = input.X * moveSpeed;
+            if (Math.Abs(velocity.X) < 6) velocity.X += input.X * moveSpeed;
             //Jumping
             if (MonoHelp.GetButtonDown(controlType, Buttons.A) && grounded)
             {
@@ -138,7 +138,8 @@ namespace KataNeo.Entitites
 
             //Set idle animation if not performing an action to the right direction
             animator.Update(gameTime);
-            flipped = input.X < 0;
+            if (input.X > 0) flipped = false;
+            else if (input.X < 0) flipped = true;
             if (!attacking)
             {
                 if (MathF.Abs(velocity.X) <= 0.5)
