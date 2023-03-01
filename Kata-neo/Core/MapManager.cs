@@ -34,16 +34,33 @@ namespace KataNeo
             if (!path.EndsWith(".knm")) path += ".knm";
             try
             {
-                var serializer = new XmlSerializer(typeof(Map));
-                using var fileStream = new FileStream(path, FileMode.Open);
-                var map = (Map)serializer.Deserialize(fileStream);
-                bg = MonoHelp.Content.Load<Texture2D>($"BGs/{map.BG}");
+                Map map;
+                //Serialize map into Map class
+                using (var fileStream = new FileStream(path, FileMode.Open))
+                    map = (Map)new XmlSerializer(typeof(Map)).Deserialize(fileStream);
+                //Set map data to manager vars
                 spawnPoses = map.SpawnPoses;
-                foreach (var tile in map.Tiles)
+                if (map.Type == "Builtin")
                 {
-                    tiles.Add(new Tile(tile.Position, tile.Scale,
-                        MonoHelp.Content.Load<Texture2D>($"Tiles/{tile.Sprite}")));
+                    bg = MonoHelp.Content.Load<Texture2D>($"BGs/{map.BG}");
+                    foreach (var tile in map.Tiles)
+                    {
+                        tiles.Add(new Tile(tile.Position, tile.Scale,
+                            MonoHelp.Content.Load<Texture2D>($"Tiles/{tile.Sprite}")));
+                    }
                 }
+                else if (map.Type == "Custom")
+                {
+                    using (var fileStream = new FileStream($"Custom/Content/BGs/{map.BG}.png", FileMode.Open))
+                        bg = Texture2D.FromStream(MonoHelp.GameWindow.GraphicsDevice, fileStream);
+                    foreach (var tile in map.Tiles)
+                    {
+                        using (var fileStream = new FileStream($"Custom/Content/Tiles/{tile.Sprite}.png", FileMode.Open))
+                            tiles.Add(new Tile(tile.Position, tile.Scale,
+                                Texture2D.FromStream(MonoHelp.GameWindow.GraphicsDevice, fileStream)));
+                    }
+                }
+                else throw new Exception("Invalid map type");
                 return;
             }
             catch (InvalidOperationException)
@@ -72,6 +89,7 @@ namespace KataNeo
         {
             path += ".knm";
             var map = new Map();
+            map.Type = "Custom";
             map.Name = "PlaygroundMap";
             map.SpawnPoses = new Vector2[] { new Vector2(64, 540), new Vector2(192, 540), new Vector2(1728, 540), new Vector2(1856, 540) };
             map.BG = "Default";
