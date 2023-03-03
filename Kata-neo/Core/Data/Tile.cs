@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KataNeo
+namespace KataNeo.Data
 {
     public class Tile
     {

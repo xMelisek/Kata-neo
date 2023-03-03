@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Type>Builtin</Type>
+  <Type>Custom</Type>
   <Name>Map1</Name>
   <BG>Default</BG>
   <SpawnPoses>
@@ -21,6 +21,19 @@
       <Y>540</Y>
     </Vector2>
   </SpawnPoses>
+  <Background>
+    <BgData>
+      <Position>
+        <X>960</X>
+        <Y>520</Y>
+      </Position>
+      <Scale>
+        <X>1</X>
+        <Y>1</Y>
+      </Scale>
+      <Sprite>Default</Sprite>
+    </BgData>
+  </Background>
   <Tiles>
     <TileData>
       <Position>
@@ -100,4 +113,17 @@
       <Sprite>Wood</Sprite>
     </TileData>
   </Tiles>
+  <Foreground>
+    <FgData>
+      <Position>
+        <X>960</X>
+        <Y>720</Y>
+      </Position>
+      <Scale>
+        <X>1</X>
+        <Y>1</Y>
+      </Scale>
+      <Sprite>Default</Sprite>
+    </FgData>
+  </Foreground>
 </Map>

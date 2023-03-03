@@ -23,6 +23,19 @@
     </Vector2>
   </SpawnPoses>
   <!--Tile positions and sprite names-->
+  <Background>
+    <BgData>
+      <Position>
+        <X>960</X>
+        <Y>520</Y>
+      </Position>
+      <Scale>
+        <X>1</X>
+        <Y>1</Y>
+      </Scale>
+      <Sprite>Default</Sprite>
+    </BgData>
+  </Background>
   <Tiles>
     <TileData>
       <Position>
@@ -47,4 +60,17 @@
       <Sprite>Default</Sprite>
     </TileData>
   </Tiles>
+  <Foreground>
+    <FgData>
+      <Position>
+        <X>960</X>
+        <Y>720</Y>
+      </Position>
+      <Scale>
+        <X>1</X>
+        <Y>1</Y>
+      </Scale>
+      <Sprite>Default</Sprite>
+    </FgData>
+  </Foreground>
 </Map>

@@ -84,7 +84,7 @@ namespace KataNeo
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             mapManager = new MapManager();
             transitionTex = Content.Load<Texture2D>("Transition");
-            //mapManager.ExportMap("Maps/PlaygroundMap");
+            mapManager.ExportMap("Maps/PlaygroundMap");
 #if DEBUG
             debugOutline = Content.Load<Texture2D>("DebugSprites/OutlineCollider");
 #endif
@@ -135,12 +135,13 @@ namespace KataNeo
             }
             //Update entities
             entityManager.Update(gameTime);
+            mapManager.Update(gameTime);
 
             if (transition) transitionPos = Mathf.Lerp(transitionPos, new Vector2(-320, 0), 0.05f);
             else transitionPos = Mathf.Lerp(transitionPos, new Vector2(-2560, 0), 0.05f);
             if (MathF.Floor(transitionPos.X) == -320 && transition)
             {
-                mapManager.SwitchMap(UnTransition);
+                mapManager.LoadMap(UnTransition);
             }
 
             base.Update(gameTime);
