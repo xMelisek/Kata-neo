@@ -84,7 +84,7 @@ namespace KataNeo
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             mapManager = new MapManager();
             transitionTex = Content.Load<Texture2D>("Transition");
-            mapManager.ExportMap("Maps/PlaygroundMap");
+            //mapManager.ExportMap("Maps/PlaygroundMap");
 #if DEBUG
             debugOutline = Content.Load<Texture2D>("DebugSprites/OutlineCollider");
 #endif
