@@ -132,7 +132,9 @@ namespace KataNeo
         {
             bg = null;
             spawnPoses = null;
+            bgObjs.Clear();
             tiles.Clear();
+            fgObjs.Clear();
             if (maps.Count == 0)
             {
                 maps = Directory.GetFiles("Maps").ToList();
@@ -147,7 +149,9 @@ namespace KataNeo
         {
             bg = null;
             spawnPoses = null;
+            bgObjs.Clear();
             tiles.Clear();
+            fgObjs.Clear();
             LoadMapData(currentMap);
         }
         #endregion
