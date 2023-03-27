@@ -159,7 +159,7 @@ namespace KataNeo
         #region Game Loop Updates
         public void Update(GameTime gameTime)
         {
-            if (MonoHelp.GetKeyDown(Keys.R)) ReloadMap();
+            if (Input.GetKeyDown(Keys.R)) ReloadMap();
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)

@@ -11,11 +11,8 @@ using System.Threading;
 
 namespace KataNeo
 {
-    public static class MonoHelp
+    public static class Input
     {
-        public static GameWindow GameWindow { get; set; }
-        public static ContentManager Content { get; set; }
-        #region Input Helpers
         public static KeyboardState prevState;
         public static KeyboardState curState;
         public static GamePadState[] prevGamePadStates;
@@ -183,25 +180,53 @@ namespace KataNeo
                     return 0f;
             }
         }
-        #endregion
 
-        #region Timers
+        public enum AxisType
+        {
+            /// <summary>
+            /// Horizontal axis for the keyboard. D is positive and A is negative
+            /// </summary>
+            HorizontalKeyboard,
+            /// <summary>
+            /// Vertical axis for the keyboard. W is positive and S is negative
+            /// </summary>
+            VerticalKeyboard,
+            /// <summary>
+            /// Horizontal axis of the left gamepad stick
+            /// </summary>
+            GamePadLeftHorizontal,
+            /// <summary>
+            /// Vertical axis of the left gamepad stick
+            /// </summary>
+            GamePadLeftVertical,
+            /// <summary>
+            /// Horizontal axis of the right gamepad stick
+            /// </summary>
+            GamePadRightHorizontal,
+            /// <summary>
+            /// Vertical axis of the right gamepad stick
+            /// </summary>
+            GamePadRightVertical,
+        }
+    }
 
+    public static class Timer
+    {
         public delegate void TimerCallback();
         static float curTime;
-        static List<Timer> _toAdd = new List<Timer>();
-        static List<Timer> _timers = new List<Timer>();
+        static List<TimerStruct> _toAdd = new List<TimerStruct>();
+        static List<TimerStruct> _timers = new List<TimerStruct>();
 
         /// <summary>
         /// Add a timer and call the function after time passes
         /// </summary>
         /// <param name="seconds">After how many seconds should the callback fire up</param>
         /// <param name="callback">Function to callback to</param>
-        public static void AddTimer(float seconds, TimerCallback callback) => _toAdd.Add(new Timer(curTime + seconds, callback));
+        public static void AddTimer(float seconds, TimerCallback callback) => _toAdd.Add(new TimerStruct(curTime + seconds, callback));
 
         public static void Update(GameTime gameTime)
         {
-            List<Timer> toDispose = new List<Timer>();
+            List<TimerStruct> toDispose = new List<TimerStruct>();
             curTime = (float)gameTime.TotalGameTime.TotalSeconds;
             foreach (var timer in _timers)
             {
@@ -216,19 +241,23 @@ namespace KataNeo
             _toAdd.Clear();
         }
 
-        struct Timer
+        struct TimerStruct
         {
             public float timerEnd;
             public TimerCallback callback;
 
-            public Timer(float timerEnd, TimerCallback callback)
+            public TimerStruct(float timerEnd, TimerCallback callback)
             {
                 this.timerEnd = timerEnd;
                 this.callback = callback;
             }
         }
+    }
 
-        #endregion
+    public static class MonoHelp
+    {
+        public static GameWindow GameWindow { get; set; }
+        public static ContentManager Content { get; set; }
 
         //TODO in this region
         #region Content Loading Helpers
@@ -332,33 +361,5 @@ namespace KataNeo
             return JsonSerializer.Deserialize<float[]>(File.ReadAllText("Data/Animations" + path.Remove(0, 7) + "/intervals.json"));
         }
         #endregion
-    }
-
-    public enum AxisType
-    {
-        /// <summary>
-        /// Horizontal axis for the keyboard. D is positive and A is negative
-        /// </summary>
-        HorizontalKeyboard,
-        /// <summary>
-        /// Vertical axis for the keyboard. W is positive and S is negative
-        /// </summary>
-        VerticalKeyboard,
-        /// <summary>
-        /// Horizontal axis of the left gamepad stick
-        /// </summary>
-        GamePadLeftHorizontal,
-        /// <summary>
-        /// Vertical axis of the left gamepad stick
-        /// </summary>
-        GamePadLeftVertical,
-        /// <summary>
-        /// Horizontal axis of the right gamepad stick
-        /// </summary>
-        GamePadRightHorizontal,
-        /// <summary>
-        /// Vertical axis of the right gamepad stick
-        /// </summary>
-        GamePadRightVertical,
     }
 }

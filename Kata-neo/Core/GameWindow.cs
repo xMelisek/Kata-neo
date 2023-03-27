@@ -52,13 +52,13 @@ namespace KataNeo
 
             MonoHelp.GameWindow = this;
             //Init states so errors wont be thrown at the first frame
-            MonoHelp.curState = Keyboard.GetState();
+            Input.curState = Keyboard.GetState();
             List<GamePadState> padStates = new List<GamePadState>();
             foreach (PlayerIndex playerIndex in (PlayerIndex[])Enum.GetValues(typeof(PlayerIndex)))
             {
                 padStates.Add(GamePad.GetState(playerIndex));
             }
-            MonoHelp.gamePadStates = padStates.ToArray();
+            Input.gamePadStates = padStates.ToArray();
 
             base.Initialize();
         }
@@ -88,42 +88,42 @@ namespace KataNeo
         protected override void Update(GameTime gameTime)
         {
             MonoHelp.Content = Content;
-            MonoHelp.Update(gameTime);
+            Timer.Update(gameTime);
             //Update input states for input handling
-            MonoHelp.prevState = MonoHelp.curState;
-            MonoHelp.curState = Keyboard.GetState();
-            MonoHelp.prevGamePadStates = MonoHelp.gamePadStates;
+            Input.prevState = Input.curState;
+            Input.curState = Keyboard.GetState();
+            Input.prevGamePadStates = Input.gamePadStates;
             List<GamePadState> padStates = new List<GamePadState>();
             foreach (PlayerIndex playerIndex in (PlayerIndex[])Enum.GetValues(typeof(PlayerIndex)))
             {
                 padStates.Add(GamePad.GetState(playerIndex));
             }
-            MonoHelp.gamePadStates = padStates.ToArray();
+            Input.gamePadStates = padStates.ToArray();
 
-            if (MonoHelp.GetKeyDown(Keys.F1)) Window.IsBorderless = true;
-            if (MonoHelp.GetKeyDown(Keys.F2)) Window.IsBorderless = false;
+            if (Input.GetKeyDown(Keys.F1)) Window.IsBorderless = true;
+            if (Input.GetKeyDown(Keys.F2)) Window.IsBorderless = false;
             //Join players
-            if (MonoHelp.GetKeyDown(Keys.Enter) && !_usedControls.Contains(ControlType.Keyboard))
+            if (Input.GetKeyDown(Keys.Enter) && !_usedControls.Contains(ControlType.Keyboard))
             {
                 entityManager.AddPlayer(ControlType.Keyboard, mapManager, mapManager.spawnPoses[_usedControls.Count]);
                 _usedControls.Add(ControlType.Keyboard);
             }
-            if (MonoHelp.GetButtonDown(PlayerIndex.One, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad1))
+            if (Input.GetButtonDown(PlayerIndex.One, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad1))
             {
                 entityManager.AddPlayer(ControlType.Gamepad1, mapManager, mapManager.spawnPoses[_usedControls.Count]);
                 _usedControls.Add(ControlType.Gamepad1);
             }
-            if (MonoHelp.GetButtonDown(PlayerIndex.Two, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad2))
+            if (Input.GetButtonDown(PlayerIndex.Two, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad2))
             {
                 entityManager.AddPlayer(ControlType.Gamepad2, mapManager, mapManager.spawnPoses[_usedControls.Count]);
                 _usedControls.Add(ControlType.Gamepad2);
             }
-            if (MonoHelp.GetButtonDown(PlayerIndex.Three, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad3))
+            if (Input.GetButtonDown(PlayerIndex.Three, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad3))
             {
                 entityManager.AddPlayer(ControlType.Gamepad3, mapManager, mapManager.spawnPoses[_usedControls.Count]);
                 _usedControls.Add(ControlType.Gamepad3);
             }
-            if (MonoHelp.GetButtonDown(PlayerIndex.Four, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad4))
+            if (Input.GetButtonDown(PlayerIndex.Four, Buttons.A) && !_usedControls.Contains(ControlType.Gamepad4))
             {
                 entityManager.AddPlayer(ControlType.Gamepad4, mapManager, mapManager.spawnPoses[_usedControls.Count]);
                 _usedControls.Add(ControlType.Gamepad4);

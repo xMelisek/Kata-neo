@@ -75,7 +75,7 @@ namespace KataNeo
                 if (entity.GetType() == typeof(Player))
                 {
                     players.Remove((Player)entity);
-                    if (players.Count == 1) MonoHelp.AddTimer(3, () => MonoHelp.GameWindow.Transition());
+                    if (players.Count == 1) Timer.AddTimer(3, () => MonoHelp.GameWindow.Transition());
                 }
                 else entities.Remove(entity);
             }

@@ -62,17 +62,17 @@ namespace KataNeo.Entitites
         /// </summary>
         public void KeyboardUpdate(GameTime gameTime)
         {
-            input = new Vector2(MonoHelp.GetAxis(AxisType.HorizontalKeyboard), MonoHelp.GetAxis(AxisType.VerticalKeyboard));
+            input = new Vector2(Input.GetAxis(Input.AxisType.HorizontalKeyboard), Input.GetAxis(Input.AxisType.VerticalKeyboard));
             //Horizontal movement, don't add when player is too fast horizontally
             if (Math.Abs(velocity.X) < 6) velocity.X += input.X * moveSpeed;
             //Jumping
-            if (MonoHelp.GetKeyDown(Keys.Space) && grounded)
+            if (Input.GetKeyDown(Keys.Space) && grounded)
             {
                 velocity.Y = 20;
                 grounded = false;
             }
             //Attacking
-            if (MonoHelp.GetKeyDown(Keys.K) && canAttack)
+            if (Input.GetKeyDown(Keys.K) && canAttack)
             {
                 animator.ChangeAnim(animData.GetAnim(flipped ? "Swing_L" : "Swing_R"));
                 if (!grounded)
@@ -85,13 +85,13 @@ namespace KataNeo.Entitites
                 else
                     attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y), this);
                 //Set attack cooldown
-                MonoHelp.AddTimer(attackDelay, EndSwing);
-                MonoHelp.AddTimer(attackCooldown, RenewAttackCD);
+                Timer.AddTimer(attackDelay, EndSwing);
+                Timer.AddTimer(attackCooldown, RenewAttackCD);
                 canAttack = false;
                 attacking = true;
             }
             //Crouching
-            crouching = MonoHelp.GetKey(Keys.S) && grounded && Math.Floor(Math.Abs(velocity.X)) == 0 && !attacking;
+            crouching = Input.GetKey(Keys.S) && grounded && Math.Floor(Math.Abs(velocity.X)) == 0 && !attacking;
         }
 
         /// <summary>
@@ -99,17 +99,17 @@ namespace KataNeo.Entitites
         /// </summary>
         public void GamepadUpdate(GameTime gameTime)
         {
-            input = new Vector2(MathF.Ceiling(MonoHelp.GetAxis(AxisType.GamePadLeftHorizontal, controlType)), MathF.Ceiling(MonoHelp.GetAxis(AxisType.GamePadLeftVertical, controlType)));
+            input = new Vector2(MathF.Ceiling(Input.GetAxis(Input.AxisType.GamePadLeftHorizontal, controlType)), MathF.Ceiling(Input.GetAxis(Input.AxisType.GamePadLeftVertical, controlType)));
             //Horizontal movement, don't add when player is too fast horizontally
             if (Math.Abs(velocity.X) < 6) velocity.X += input.X * moveSpeed;
             //Jumping
-            if (MonoHelp.GetButtonDown(controlType, Buttons.A) && grounded)
+            if (Input.GetButtonDown(controlType, Buttons.A) && grounded)
             {
                 velocity.Y = 20;
                 grounded = false;
             }
             //Attacking
-            if (MonoHelp.GetButtonDown(controlType, Buttons.X) && canAttack)
+            if (Input.GetButtonDown(controlType, Buttons.X) && canAttack)
             {
                 animator.ChangeAnim(animData.GetAnim(flipped ? "Swing_L" : "Swing_R"));
                 if (!grounded)
@@ -122,8 +122,8 @@ namespace KataNeo.Entitites
                 else
                     attack = new Attack(new Vector2(attackOffset.X * input.X, attackOffset.Y * input.Y), this);
                 //Set attack cooldown
-                MonoHelp.AddTimer(attackDelay, EndSwing);
-                MonoHelp.AddTimer(attackCooldown, RenewAttackCD);
+                Timer.AddTimer(attackDelay, EndSwing);
+                Timer.AddTimer(attackCooldown, RenewAttackCD);
                 canAttack = false;
                 attacking = true;
             }
