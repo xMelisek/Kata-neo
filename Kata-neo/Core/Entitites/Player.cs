@@ -37,6 +37,7 @@ namespace KataNeo.Entitites
         public float moveSpeed = 3f;
         private bool flipped = false;
         bool grounded = false;
+        bool crouching = false;
 
         //Attack vars
         private Vector2 attackOffset = new Vector2(50, 50);
@@ -89,6 +90,8 @@ namespace KataNeo.Entitites
                 canAttack = false;
                 attacking = true;
             }
+            //Crouching
+            crouching = MonoHelp.GetKey(Keys.S) && grounded && Math.Floor(Math.Abs(velocity.X)) == 0 && !attacking;
         }
 
         /// <summary>
@@ -124,6 +127,8 @@ namespace KataNeo.Entitites
                 canAttack = false;
                 attacking = true;
             }
+            //Crouching
+            crouching = input.Y < 0 && grounded && Math.Floor(Math.Abs(velocity.X)) == 0 && !attacking;
         }
 
         public override void Update(GameTime gameTime)
@@ -140,9 +145,17 @@ namespace KataNeo.Entitites
             animator.Update(gameTime);
             if (input.X > 0) flipped = false;
             else if (input.X < 0) flipped = true;
+            
+
+            //Decrease velocity and check collision
+            velocity = Mathf.Lerp(velocity, baseVelocity, 0.05f);
+            CheckCollision();
+
+            //Put change anim checks after collision checking otherwise crouch is buggy on objects
             if (!attacking)
             {
-                if (MathF.Abs(velocity.X) <= 0.5)
+                if (crouching) animator.ChangeAnim(animData.GetAnim(flipped ? "Crouch_L" : "Crouch_R"));
+                else if (MathF.Abs(velocity.X) <= 0.5)
                 {
                     animator.ChangeAnim(animData.GetAnim(flipped ? "Idle_L" : "Idle_R"));
                 }
@@ -151,11 +164,6 @@ namespace KataNeo.Entitites
                     animator.ChangeAnim(animData.GetAnim(flipped ? "Run_L" : "Run_R"));
                 }
             }
-
-            //Decrease velocity and check collision
-            velocity = Mathf.Lerp(velocity, baseVelocity, 0.05f);
-            CheckCollision();
-
             //Check if the player is on the bottom of the screen so he can jump
             if (position.Y > 1080 - sprite.Height * scale.Y / 2)
             {
@@ -177,8 +185,10 @@ namespace KataNeo.Entitites
         }
         #endregion
 
+        //Callback for the animator to update the texture
         void UpdateTex(Texture2D tex) => sprite = tex;
 
+        //Attack timer callbacks
         void EndSwing()
         {
             attack = null;

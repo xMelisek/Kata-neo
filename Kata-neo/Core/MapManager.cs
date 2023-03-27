@@ -173,10 +173,15 @@ namespace KataNeo
             foreach (var tile in tiles)
                 spriteBatch.Draw(tile.sprite, tile.position, null, Color.White, 0f,
                 new Vector2(tile.sprite.Width / 2, tile.sprite.Height / 2), tile.scale, SpriteEffects.None, 0f);
+        }
+
+        public void DrawFg(GameTime gameTime, SpriteBatch spriteBatch)
+        {
             foreach (var fgObj in fgObjs)
                 spriteBatch.Draw(fgObj.sprite, fgObj.position, null, Color.White, 0f,
                 new Vector2(fgObj.sprite.Width / 2, fgObj.sprite.Height / 2), fgObj.scale, SpriteEffects.None, 0f);
         }
+
         #endregion
     }
 }

@@ -22,9 +22,6 @@ namespace KataNeo
         private bool transition;
         private Texture2D transitionTex;
         private Vector2 transitionPos = new Vector2(-2560, 0);
-#if DEBUG
-        private Texture2D debugOutline;
-#endif
 
         public GameWindow()
         {
@@ -85,9 +82,7 @@ namespace KataNeo
             mapManager = new MapManager();
             transitionTex = Content.Load<Texture2D>("Transition");
             //mapManager.ExportMap("Maps/PlaygroundMap");
-#if DEBUG
-            debugOutline = Content.Load<Texture2D>("DebugSprites/OutlineCollider");
-#endif
+            KDebug.debugOutline = Content.Load<Texture2D>("DebugSprites/OutlineCollider");
         }
 
         protected override void Update(GameTime gameTime)
@@ -157,25 +152,15 @@ namespace KataNeo
             mapManager.Draw(gameTime, _spriteBatch);
             //Draw entities
             entityManager.Draw(gameTime, _spriteBatch);
-#if DEBUG
-            //Debug drawing
-            foreach (var tile in mapManager.tiles)
-            {
-                _spriteBatch.Draw(debugOutline, tile.Rect, Color.Green);
-            }
-            foreach (var player in entityManager.players)
-            {
-                _spriteBatch.Draw(debugOutline, player.Rect, Color.Green);
-                if(player.attack != null)
-                    _spriteBatch.Draw(debugOutline, player.attack.Rect, Color.Red);
-            }
-#endif
+            mapManager.DrawFg(gameTime, _spriteBatch);
+            KDebug.Draw(mapManager, entityManager, _spriteBatch);
             _spriteBatch.Draw(transitionTex, transitionPos, Color.White);
             _spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
+        //Should maybe put it later into its own thing
         public void Transition()
         {
             transitionPos = new Vector2(2560, 0);

@@ -46,6 +46,11 @@
   </ItemGroup>
   
   <ItemGroup>
+    <None Remove="Data\Animations\Player\Crouch_L\intervals.json" />
+    <None Remove="Data\Animations\Player\Crouch_R\intervals.json" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <Folder Include="Custom\Content\Tiles\" />
   </ItemGroup>
 </Project>
