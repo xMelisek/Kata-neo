@@ -47,21 +47,4 @@
     <EmbeddedResource Remove="Build\**" />
     <None Remove="Build\**" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <None Remove="Assets\Attack\Slash.json" />
-    <None Remove="Assets\Attack\Slash.png" />
-    <None Remove="Assets\Player\Crouch.json" />
-    <None Remove="Assets\Player\Crouch.png" />
-    <None Remove="Assets\Player\Run.json" />
-    <None Remove="Assets\Player\Run.png" />
-    <None Remove="Assets\Player\Swing.json" />
-    <None Remove="Assets\Player\Swing.png" />
-    <None Remove="Assets\Player\Wallcling.json" />
-    <None Remove="Assets\Player\Wallcling.png" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Custom\Content\Tiles\" />
-  </ItemGroup>
 </Project>
