@@ -33,10 +33,15 @@ namespace KataNeo.Entitites
         }
         private Vector2 input;
         public Vector2 velocity;
+        /// <summary>
+        /// The velocity to which the player goes back to
+        /// </summary>
         private readonly Vector2 baseVelocity = new Vector2(0, -19.62f);
         public float moveSpeed = 3f;
+        private Vector2 wallJumpAngle = new Vector2(0.5f, 1);
         private bool flipped = false;
         bool grounded = false;
+        string wallcling;
         bool crouching = false;
 
         //Attack vars
@@ -65,11 +70,19 @@ namespace KataNeo.Entitites
             input = new Vector2(Input.GetAxis(Input.AxisType.HorizontalKeyboard), Input.GetAxis(Input.AxisType.VerticalKeyboard));
             //Horizontal movement, don't add when player is too fast horizontally
             if (Math.Abs(velocity.X) < 6) velocity.X += input.X * moveSpeed;
-            //Jumping
-            if (Input.GetKeyDown(Keys.Space) && grounded)
+            //Jumping and walljumping
+            if (Input.GetKeyDown(Keys.Space))
             {
-                velocity.Y = 20;
-                grounded = false;
+                if(grounded)
+                {
+                    velocity.Y = 20;
+                    grounded = false;
+                }
+                else if (wallcling != null)
+                {
+                    velocity += new Vector2(wallcling == "right" ? wallJumpAngle.X : -wallJumpAngle.X, wallJumpAngle.Y) * 15;
+                    wallcling = null;
+                }
             }
             //Attacking
             if (Input.GetKeyDown(Keys.K) && canAttack)
@@ -155,10 +168,12 @@ namespace KataNeo.Entitites
             if (!attacking)
             {
                 if (crouching) animator.ChangeAnim(atlas.GetAnim("Crouch"));
-                else if (MathF.Abs(velocity.X) <= 0.5)
+                else if (MathF.Abs(velocity.X) <= 0.5 && grounded)
                 {
                     animator.ChangeAnim(atlas.GetAnim("Idle"));
                 }
+                else if (wallcling != null && !grounded)
+                    animator.ChangeAnim(atlas.GetAnim("Wallcling"));
                 else
                 {
                     animator.ChangeAnim(atlas.GetAnim("Run"));
@@ -180,8 +195,12 @@ namespace KataNeo.Entitites
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             if (attacking) attack.Draw(gameTime, spriteBatch);
-            spriteBatch.Draw(sprite, position, null, Color.White, 0f,
-                new Vector2(sprite.Width / 2, sprite.Height / 2), scale, flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+            if(wallcling != null && !grounded)
+                spriteBatch.Draw(sprite, position, null, Color.White, 0f,
+                    new Vector2(sprite.Width / 2, sprite.Height / 2), scale, wallcling == "right" ? SpriteEffects.None: SpriteEffects.FlipHorizontally, 0f);
+            else
+                spriteBatch.Draw(sprite, position, null, Color.White, 0f,
+                    new Vector2(sprite.Width / 2, sprite.Height / 2), scale, flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
         }
         #endregion
 
@@ -238,9 +257,11 @@ namespace KataNeo.Entitites
                         distVec.Y = Rect.Top - tile.Rect.Bottom;
                     if (right)
                     {
+                        //Confine the player on the right side if he is on it
                         if (Math.Abs(distVec.X) < Math.Abs(distVec.Y))
                         {
-                            position.X = tile.Rect.Right + sprite.Width * scale.X / 2;
+                            wallcling = "right";
+                            position.X = tile.Rect.Right + sprite.Width * scale.X / 2 - 2;
                             velocity.X = 0;
                         }
                         else
@@ -257,13 +278,16 @@ namespace KataNeo.Entitites
                                 position.Y = tile.Rect.Bottom + sprite.Height * scale.Y / 2;
                                 velocity.Y = 0;
                             }
+                            wallcling = null;
                         }
                     }
                     else
                     {
+                        //Confine the player on the left side if he is on it
                         if (Math.Abs(distVec.X) < Math.Abs(distVec.Y))
                         {
-                            position.X = tile.Rect.Left - sprite.Width * scale.X / 2;
+                            wallcling = "left";
+                            position.X = tile.Rect.Left - sprite.Width * scale.X / 2 + 2;
                             velocity.X = 0;
                         }
                         else
@@ -280,6 +304,7 @@ namespace KataNeo.Entitites
                                 position.Y = tile.Rect.Bottom + sprite.Height * scale.Y / 2;
                                 velocity.Y = 0;
                             }
+                            wallcling = null;
                         }
                     }
                 }

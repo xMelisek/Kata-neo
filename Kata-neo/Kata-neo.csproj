@@ -57,6 +57,8 @@
     <None Remove="Assets\Player\Run.png" />
     <None Remove="Assets\Player\Swing.json" />
     <None Remove="Assets\Player\Swing.png" />
+    <None Remove="Assets\Player\Wallcling.json" />
+    <None Remove="Assets\Player\Wallcling.png" />
   </ItemGroup>
   
   <ItemGroup>
