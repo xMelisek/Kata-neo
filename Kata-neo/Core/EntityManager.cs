@@ -37,7 +37,7 @@ namespace KataNeo
         /// <param name="mapManager"></param>
         public void AddPlayer(ControlType controlType, MapManager mapManager, Vector2 position)
         {
-            players.Add(new Player(controlType, mapManager, MonoHelp.GetAllAnims("Player"), position));
+            players.Add(new Player(controlType, mapManager, Content.LoadAtlas("Player"), position));
         }
 
         /// <summary>
@@ -74,6 +74,7 @@ namespace KataNeo
             {
                 if (entity.GetType() == typeof(Player))
                 {
+                    //Change later for a death state
                     players.Remove((Player)entity);
                     if (players.Count == 1) Timer.AddTimer(3, () => MonoHelp.GameWindow.Transition());
                 }

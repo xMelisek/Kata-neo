@@ -30,8 +30,8 @@ namespace KataNeo.Entities
             dir = offset;
             offset.Y = -offset.Y;
             this.offset = offset;
-            AnimData animData = MonoHelp.GetAllAnims("Attack");
-            animator = new Animator(ref sprite, animData.GetAnim(0), UpdateTex);
+            Atlas atlas = Content.LoadAtlas("Attack");
+            animator = new Animator(atlas.GetAnim(0), UpdateTex);
         }
 
         void UpdateTex(Texture2D tex) => sprite = tex;

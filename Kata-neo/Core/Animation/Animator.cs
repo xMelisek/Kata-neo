@@ -11,11 +11,11 @@ namespace KataNeo.Animation
         private float curTime = 0;
         private int index = 0;
 
-        public Animator(ref Texture2D target, Anim anim, UpdateTexture callback)
+        public Animator(Anim anim, UpdateTexture callback)
         {
             curAnim = anim;
-            target = curAnim.frames[0];
             this.callback = callback;
+            callback(curAnim.frames[0]);
         }
 
         public void Update(GameTime gameTime)
@@ -77,12 +77,15 @@ namespace KataNeo.Animation
         }
     }
 
-    public class AnimData
+    /// <summary>
+    /// Animation collection
+    /// </summary>
+    public class Atlas
     {
         public Anim[] anims;
         public string[] keys;
 
-        public AnimData(Anim[] anims, string[] keys)
+        public Atlas(Anim[] anims, string[] keys)
         {
             this.anims = anims;
             this.keys = keys;

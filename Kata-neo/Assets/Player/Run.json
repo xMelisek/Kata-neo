@@ -1,0 +1,90 @@
+{ "frames": [
+   {
+    "filename": "4593787.104999996_run 0.gif",
+    "frame": { "x": 0, "y": 0, "w": 10, "h": 15 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 10, "h": 15 },
+    "sourceSize": { "w": 10, "h": 15 },
+    "duration": 50
+   },
+   {
+    "filename": "4593787.104999996_run 1.gif",
+    "frame": { "x": 10, "y": 0, "w": 10, "h": 15 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 10, "h": 15 },
+    "sourceSize": { "w": 10, "h": 15 },
+    "duration": 50
+   },
+   {
+    "filename": "4593787.104999996_run 2.gif",
+    "frame": { "x": 20, "y": 0, "w": 10, "h": 15 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 10, "h": 15 },
+    "sourceSize": { "w": 10, "h": 15 },
+    "duration": 50
+   },
+   {
+    "filename": "4593787.104999996_run 3.gif",
+    "frame": { "x": 30, "y": 0, "w": 10, "h": 15 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 10, "h": 15 },
+    "sourceSize": { "w": 10, "h": 15 },
+    "duration": 50
+   },
+   {
+    "filename": "4593787.104999996_run 4.gif",
+    "frame": { "x": 40, "y": 0, "w": 10, "h": 15 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 10, "h": 15 },
+    "sourceSize": { "w": 10, "h": 15 },
+    "duration": 50
+   },
+   {
+    "filename": "4593787.104999996_run 5.gif",
+    "frame": { "x": 50, "y": 0, "w": 10, "h": 15 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 10, "h": 15 },
+    "sourceSize": { "w": 10, "h": 15 },
+    "duration": 50
+   },
+   {
+    "filename": "4593787.104999996_run 6.gif",
+    "frame": { "x": 60, "y": 0, "w": 10, "h": 15 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 10, "h": 15 },
+    "sourceSize": { "w": 10, "h": 15 },
+    "duration": 50
+   },
+   {
+    "filename": "4593787.104999996_run 7.gif",
+    "frame": { "x": 70, "y": 0, "w": 10, "h": 15 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 10, "h": 15 },
+    "sourceSize": { "w": 10, "h": 15 },
+    "duration": 50
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3-beta14-dev",
+  "image": "Run.png",
+  "format": "I8",
+  "size": { "w": 80, "h": 15 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

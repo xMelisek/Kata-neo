@@ -12,7 +12,7 @@ namespace KataNeo.Entitites
     {
         //General vars
         public Texture2D sprite;
-        public AnimData animData;
+        public Atlas atlas;
         public Animator animator;
 
         public ControlType controlType;
@@ -47,13 +47,13 @@ namespace KataNeo.Entitites
         bool attacking = false;
         bool canAttack = true;
 
-        public Player(ControlType controlType, MapManager mapManager, AnimData animData, Vector2 position)
+        public Player(ControlType controlType, MapManager mapManager, Atlas atlas, Vector2 position)
         {
             this.position = position;
             this.controlType = controlType;
             this.mapManager = mapManager;
-            this.animData = animData;
-            animator = new Animator(ref sprite, animData.GetAnim("Idle_R"), UpdateTex);
+            this.atlas = atlas;
+            animator = new Animator(atlas.GetAnim("Idle"), UpdateTex);
         }
 
         #region Game Loop Updates
@@ -74,7 +74,7 @@ namespace KataNeo.Entitites
             //Attacking
             if (Input.GetKeyDown(Keys.K) && canAttack)
             {
-                animator.ChangeAnim(animData.GetAnim(flipped ? "Swing_L" : "Swing_R"));
+                animator.ChangeAnim(atlas.GetAnim("Swing"));
                 if (!grounded)
                 {
                     velocity += new Vector2(attackForce * input.X, attackForce * input.Y);
@@ -111,7 +111,7 @@ namespace KataNeo.Entitites
             //Attacking
             if (Input.GetButtonDown(controlType, Buttons.X) && canAttack)
             {
-                animator.ChangeAnim(animData.GetAnim(flipped ? "Swing_L" : "Swing_R"));
+                animator.ChangeAnim(atlas.GetAnim("Swing"));
                 if (!grounded)
                 {
                     velocity += new Vector2(attackForce * input.X, attackForce * input.Y);
@@ -154,14 +154,14 @@ namespace KataNeo.Entitites
             //Put change anim checks after collision checking otherwise crouch is buggy on objects
             if (!attacking)
             {
-                if (crouching) animator.ChangeAnim(animData.GetAnim(flipped ? "Crouch_L" : "Crouch_R"));
+                if (crouching) animator.ChangeAnim(atlas.GetAnim("Crouch"));
                 else if (MathF.Abs(velocity.X) <= 0.5)
                 {
-                    animator.ChangeAnim(animData.GetAnim(flipped ? "Idle_L" : "Idle_R"));
+                    animator.ChangeAnim(atlas.GetAnim("Idle"));
                 }
                 else
                 {
-                    animator.ChangeAnim(animData.GetAnim(flipped ? "Run_L" : "Run_R"));
+                    animator.ChangeAnim(atlas.GetAnim("Run"));
                 }
             }
             //Check if the player is on the bottom of the screen so he can jump
@@ -181,7 +181,7 @@ namespace KataNeo.Entitites
         {
             if (attacking) attack.Draw(gameTime, spriteBatch);
             spriteBatch.Draw(sprite, position, null, Color.White, 0f,
-                new Vector2(sprite.Width / 2, sprite.Height / 2), scale, SpriteEffects.None, 0f);
+                new Vector2(sprite.Width / 2, sprite.Height / 2), scale, flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
         }
         #endregion
 
@@ -193,7 +193,7 @@ namespace KataNeo.Entitites
         {
             attack = null;
             attacking = false;
-            animator.ChangeAnim(animData.GetAnim(flipped ? "Idle_L" : "Idle_R"));
+            animator.ChangeAnim(atlas.GetAnim("Idle"));
         }
 
         void RenewAttackCD() => canAttack = true;

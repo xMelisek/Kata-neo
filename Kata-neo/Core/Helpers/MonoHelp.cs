@@ -1,9 +1,11 @@
 ﻿using KataNeo.Animation;
+using KataNeo.Aseprite;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -254,13 +256,79 @@ namespace KataNeo
         }
     }
 
+    public static class Content
+    {
+        static readonly string contentRoot = "Assets\\";
+
+        #region Content Loading
+        public static Texture2D LoadTexture2D(string path)
+        {
+            return Texture2D.FromFile(MonoHelp.GameWindow.GraphicsDevice, path);
+        }
+
+        /// <summary>
+        /// Loads spritesheets and their metadata from the specified path
+        /// </summary>
+        /// <param name="path">Path to the folder containing the spritesheets and metadata</param>
+        /// <returns></returns>
+        public static Atlas LoadAtlas(string path)
+        {
+            path = contentRoot + path;
+            List<Anim> anims = new List<Anim>();
+            List<string> keys = new List<string>();
+
+            string[] spritesheets = Directory.GetFiles(path, "*.png");
+            string[] metadatas = Directory.GetFiles(path, "*.json");
+
+            if (spritesheets.Length == 0)
+                throw new System.Exception("There are no spritesheets inside the directory");
+
+            if (spritesheets.Length != metadatas.Length)
+                throw new System.Exception("Not enough metadata files or spritesheets. Number between the files is not equal.");
+
+            for (int i = 0; i < spritesheets.Length; i++)
+            {
+                Texture2D spritesheet = LoadTexture2D(spritesheets[i]);
+                //Get rects and intervals from aseprite metadata and convert them into anims
+                List<Texture2D> frames = new List<Texture2D>();
+                List<float> intervals = new List<float>();
+                var metadata = JsonSerializer.Deserialize<AnimMetadata>(File.ReadAllText(metadatas[i]));
+                foreach (var frameData in metadata.frames)
+                {
+                    frames.Add(MonoHelp.GetSubTexture(spritesheet, new Rectangle((int)frameData.frame.x, (int)frameData.frame.y, (int)frameData.frame.w, (int)frameData.frame.h)));
+                    intervals.Add(frameData.duration * 0.001f);
+                }
+                anims.Add(new Anim(frames.ToArray(), intervals.ToArray()));
+
+                keys.Add(spritesheets[i].Substring(spritesheets[i].LastIndexOf('\\') + 1, spritesheets[i].Length - spritesheets[i].LastIndexOf('\\') - 5));
+            }
+
+            return new Atlas(anims.ToArray(), keys.ToArray());
+        }
+        #endregion
+    }
+
     public static class MonoHelp
     {
         public static GameWindow GameWindow { get; set; }
         public static ContentManager Content { get; set; }
 
-        //TODO in this region
-        #region Content Loading Helpers
+        public static Texture2D GetSubTexture(Texture2D tex, Rectangle rect)
+        {
+            Color[] texData = new Color[tex.Width * tex.Height];
+            tex.GetData(texData);
+
+            Color[] rectData = new Color[rect.Width * rect.Height];
+            for(int x = 0; x < rect.Width; x++)
+                for(int y = 0; y < rect.Height; y++)
+                    rectData[x + y * rect.Width] = texData[x + rect.X + (y + rect.Y) * tex.Width];
+            var subTex = new Texture2D(GameWindow.GraphicsDevice, rect.Width, rect.Height);
+            subTex.SetData(rectData);
+            return subTex;
+        }
+
+        //TODO in this region (or not as it's obsolete for now)
+        #region Monogame Content Loading Helpers
         /// <summary>
         /// Load all content from the specified folder
         /// </summary>
@@ -334,7 +402,7 @@ namespace KataNeo
         /// </summary>
         /// <returns>Animation data</returns>
         /// <exception cref="System.Exception"></exception>
-        public static AnimData GetAllAnims(string path)
+        public static Atlas GetAllAnims(string path)
         {
             //Get all of the animations with directories to them
             var sheets = MonoHelp.LoadAllContent<Texture2D>(path, true, true);
@@ -353,7 +421,7 @@ namespace KataNeo
                 int backslash = dir.LastIndexOf('\\');
                 keys.Add(backslash > slash ? dir.Remove(0, backslash + 1) : dir.Remove(0, slash + 1));
             }
-            return new AnimData(anims.ToArray(), keys.ToArray());
+            return new Atlas(anims.ToArray(), keys.ToArray());
         }
 
         private static float[] GetIntervals(string path)
