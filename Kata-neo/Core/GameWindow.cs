@@ -46,9 +46,13 @@ namespace KataNeo
             _usedControls = new List<ControlType>();
             entityManager = new EntityManager(this);
 
+            TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.PreferredBackBufferHeight = 720;
             _graphics.ApplyChanges();
+
+            Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += OnResize;
 
             MonoHelp.GameWindow = this;
             //Init states so errors wont be thrown at the first frame
@@ -73,6 +77,22 @@ namespace KataNeo
             _resolutionIndependence.Initialize();
 
             _camera.RecalculateTransformationMatrices();
+        }
+
+        private void OnResize(object sender, EventArgs e)
+        {
+            Point bounds = CalcResolution();
+            InitializeResolutionIndependence(bounds.X, bounds.Y);
+        }
+
+        private Point CalcResolution()
+        {
+            // Get window width multiplier
+            float multiplier = Window.ClientBounds.Width / 16f;
+            //Check if width multiplier will fit into window height
+            while (9 * multiplier > Window.ClientBounds.Height)
+                multiplier--;
+            return new Point((int)(16 * multiplier), (int)(9 * multiplier));
         }
 
         protected override void LoadContent()

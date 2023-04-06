@@ -180,9 +180,11 @@ namespace KataNeo.Entitites
                 }
             }
             //Check if the player is on the bottom of the screen so he can jump
-            if (position.Y > 1080 - sprite.Height * scale.Y / 2)
+            //Fix the player being on the wallcling animation when on the bottom border and hugging a wall
+            if (position.Y > 1080 - sprite.Height * scale.Y / 2 - 1)
             {
                 grounded = true;
+                wallcling = null;
             }
             //Confine the player within the game window
             if (alive)
