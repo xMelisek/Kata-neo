@@ -19,6 +19,7 @@ namespace KataNeo.Entitites
         private MapManager mapManager;
         public Attack attack;
 
+        private PlayerState playerState;
         public int Health { get; private set; } = 100;
         //Unused for now, maybe will be used for a lying body after death
         bool alive = true;
@@ -39,6 +40,7 @@ namespace KataNeo.Entitites
         private readonly Vector2 baseVelocity = new Vector2(0, -19.62f);
         public float moveSpeed = 3f;
         private Vector2 wallJumpAngle = new Vector2(0.5f, 1);
+        private float wallJumpForce = 15f;
         private bool flipped = false;
         bool grounded = false;
         string wallcling;
@@ -80,7 +82,7 @@ namespace KataNeo.Entitites
                 }
                 else if (wallcling != null)
                 {
-                    velocity += new Vector2(wallcling == "right" ? wallJumpAngle.X : -wallJumpAngle.X, wallJumpAngle.Y) * 15;
+                    velocity += new Vector2(wallcling == "right" ? wallJumpAngle.X : -wallJumpAngle.X, wallJumpAngle.Y) * wallJumpForce;
                     wallcling = null;
                 }
             }
@@ -158,13 +160,45 @@ namespace KataNeo.Entitites
             animator.Update(gameTime);
             if (input.X > 0) flipped = false;
             else if (input.X < 0) flipped = true;
-            
+
+            //Should probably make it being changed in proper places, but i'm too dumb and lazy
+            if (grounded)
+                playerState = PlayerState.Grounded;
+            else if (attacking)
+                playerState = PlayerState.Attacking;
+            else if (wallcling != null)
+                playerState = PlayerState.Walljumped;
+            else
+                playerState = PlayerState.Airborne;
 
             //Decrease velocity and check collision
-            velocity = Mathf.Lerp(velocity, baseVelocity, 0.05f);
+            switch(playerState)
+            {
+                case PlayerState.Grounded:
+                    velocity = Mathf.Lerp(velocity, Vector2.Zero, 0.05f);
+                    break;
+                case PlayerState.Airborne:
+                    velocity = Mathf.Lerp(velocity, baseVelocity, 0.05f);
+                    break;
+                case PlayerState.Walljumped:
+                    velocity = Mathf.Lerp(velocity, baseVelocity, velocity.Y < 0 ? 0.01f : 0.04f);
+                    break;
+                case PlayerState.Attacking:
+                    velocity = Mathf.Lerp(velocity, baseVelocity, 0.025f);
+                    break;
+            }
+            
             CheckCollision();
 
+            //Check if the player is on the bottom of the screen so he can jump
+            //Fix the player being on the wallcling animation when on the bottom border and hugging a wall
+            if (position.Y > 1080 - sprite.Height * scale.Y / 2 - 1)
+            {
+                grounded = true;
+                wallcling = null;
+            }
             //Put change anim checks after collision checking otherwise crouch is buggy on objects
+            //And put it after the groundcheck on bottom border so wallcling won't be buggy
             if (!attacking)
             {
                 if (crouching) animator.ChangeAnim(atlas.GetAnim("Crouch"));
@@ -178,13 +212,6 @@ namespace KataNeo.Entitites
                 {
                     animator.ChangeAnim(atlas.GetAnim("Run"));
                 }
-            }
-            //Check if the player is on the bottom of the screen so he can jump
-            //Fix the player being on the wallcling animation when on the bottom border and hugging a wall
-            if (position.Y > 1080 - sprite.Height * scale.Y / 2 - 1)
-            {
-                grounded = true;
-                wallcling = null;
             }
             //Confine the player within the game window
             if (alive)
@@ -235,6 +262,7 @@ namespace KataNeo.Entitites
         public void CheckCollision()
         {
             grounded = false;
+            wallcling = null;
             foreach (var tile in mapManager.tiles)
             {
                 if (Rect.Intersects(tile.Rect))
@@ -263,7 +291,7 @@ namespace KataNeo.Entitites
                         if (Math.Abs(distVec.X) < Math.Abs(distVec.Y))
                         {
                             wallcling = "right";
-                            position.X = tile.Rect.Right + sprite.Width * scale.X / 2 - 2;
+                            position.X = tile.Rect.Right + sprite.Width * scale.X / 2 - 3;
                             velocity.X = 0;
                         }
                         else
@@ -289,7 +317,7 @@ namespace KataNeo.Entitites
                         if (Math.Abs(distVec.X) < Math.Abs(distVec.Y))
                         {
                             wallcling = "left";
-                            position.X = tile.Rect.Left - sprite.Width * scale.X / 2 + 2;
+                            position.X = tile.Rect.Left - sprite.Width * scale.X / 2 + 3;
                             velocity.X = 0;
                         }
                         else
@@ -311,6 +339,14 @@ namespace KataNeo.Entitites
                     }
                 }
             }
+        }
+
+        enum PlayerState
+        {
+            Grounded,
+            Airborne,
+            Walljumped,
+            Attacking
         }
     }
 }

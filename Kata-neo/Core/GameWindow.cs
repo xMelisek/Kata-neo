@@ -51,8 +51,8 @@ namespace KataNeo
             _graphics.PreferredBackBufferHeight = 720;
             _graphics.ApplyChanges();
 
-            Window.AllowUserResizing = true;
-            Window.ClientSizeChanged += OnResize;
+            //Window.AllowUserResizing = true;
+            //Window.ClientSizeChanged += OnResize;
 
             MonoHelp.GameWindow = this;
             //Init states so errors wont be thrown at the first frame
